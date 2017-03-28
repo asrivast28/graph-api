@@ -5,25 +5,62 @@
 #ifndef VERTEX_HPP_
 #define VERTEX_HPP_
 
+#include "GraphType.hpp"
+
 #include <iterator>
 
 
-// Forward declaration of Edges class.
-template <typename GraphType, typename IteratorType>
-class Edges;
+// Forward declaration of EdgeIterator class.
+template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
+class EdgeIterator;
 
 /**
- * @brief  Wrapper around graph vertex implementation.
+ * @brief  Skeleton class that outlines the functionality that should be provided by vertex class.
  *
- * @tparam GraphType  Type of the graph implementation.
+ * @tparam GraphType     Type of the graph implementation.
+ * @tparam VertexIdType  Unsigned type for storing vertex ids.
  */
-template <typename GraphType>
-class Vertex {
+template <template <typename> class GraphType, typename VertexIdType>
+class VertexSkeleton {
+public:
+  virtual
+  VertexIdType
+  id() const = 0;
+
+  virtual
+  size_t
+  inDegree() const;
+
+  virtual
+  typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>
+  inEdges() const = 0;
+
+  virtual
+  bool
+  hasEdgeTo(const VertexSkeleton<GraphType, VertexIdType>&) const;
+}; // class VertexSkeleton
+
+/**
+ * @brief  Class that provides vertex functionality.
+ *
+ * @tparam GraphType     Type of the graph implementation.
+ * @tparam VertexIdType  Unsigned type for storing vertex ids.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+class Vertex : public VertexSkeleton<GraphType, VertexIdType> {
+public:
+  class Iterator; 
+}; // class Vertex
+
+/**
+ * @brief  Partial specialization of Vertex class for GraphType = UndirectedAdjacencyList.
+ */
+template <typename VertexIdType>
+class Vertex<UndirectedAdjacencyList, VertexIdType> : public VertexSkeleton<UndirectedAdjacencyList, VertexIdType> {
 private:
-  using GraphImpl = typename GraphType::Impl;
-  using VertexIdType = typename GraphType::VertexIdType;
-  using VertexType = typename GraphType::VertexType;
-  using VertexIterator = typename GraphType::VertexIterator;
+  using GraphImpl = typename UndirectedAdjacencyList<VertexIdType>::Impl;
+  using VertexType = typename UndirectedAdjacencyList<VertexIdType>::VertexType;
+  using IteratorType = typename UndirectedAdjacencyList<VertexIdType>::VertexIterator;
 
 public:
   /**
@@ -32,7 +69,7 @@ public:
   class Iterator : public std::iterator<std::forward_iterator_tag, Vertex>
   {
   public:
-    Iterator(const GraphImpl&, const std::pair<VertexIterator, VertexIterator>&);
+    Iterator(const GraphImpl&, const std::pair<IteratorType, IteratorType>&);
 
     Iterator&
     operator++();
@@ -48,8 +85,8 @@ public:
 
   private:
     const GraphImpl& m_graph;
-    VertexIterator m_current;
-    const VertexIterator m_end;
+    IteratorType m_current;
+    const IteratorType m_end;
   }; // class Iterator
 
 public:
@@ -61,39 +98,64 @@ public:
   size_t
   inDegree() const;
 
-  typename ::Edges<GraphType, typename GraphType::InEdgeIterator>
+  typename ::EdgeIterator<UndirectedAdjacencyList, VertexIdType, typename UndirectedAdjacencyList<VertexIdType>::InEdgeIterator>
   inEdges() const;
 
   bool
-  hasEdgeTo(const Vertex<GraphType>&) const;
+  hasEdgeTo(const Vertex<UndirectedAdjacencyList, VertexIdType>&) const;
 
 private:
   const GraphImpl& m_graph;
   const VertexType m_vertex;
-}; // class Vertex
+}; // class Vertex<UndirectedAdjacencyList, VertexIdType> 
+
+/**
+ * @brief  Skeleton class that outlines the functionality that should be provided by vertex iterator provider class.
+ *
+ * @tparam GraphType     Type of the graph implementation.
+ * @tparam VertexIdType  Unsigned type for storing vertex ids.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+class VertexIteratorSkeleton {
+public:
+  virtual
+  typename Vertex<GraphType, VertexIdType>::Iterator
+  begin() const = 0;
+
+  virtual
+  typename Vertex<GraphType, VertexIdType>::Iterator
+  end() const = 0;
+}; // class VertexIteratorSkeleton
 
 /**
  * @brief  Class that provides an iterator over vertices of the graph.
  *
- * @tparam GraphType  Type of the graph implementation.
- * */
-template <typename GraphType>
-class Vertices {
+ * @tparam GraphType     Type of the graph implementation.
+ * @tparam VertexIdType  Unsigned type for storing vertex ids.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+class VertexIterator : public VertexIteratorSkeleton<GraphType, VertexIdType> {
+}; // class VertexIterator
+
+/**
+ * @brief  Partial specialization of VertexIterator class for GraphType = UndirectedAdjacencyList.
+ */
+template <typename VertexIdType>
+class VertexIterator<UndirectedAdjacencyList, VertexIdType> : public VertexIteratorSkeleton<UndirectedAdjacencyList, VertexIdType> {
 private:
-  using GraphImpl = typename GraphType::Impl;
-  using VertexIterator = typename GraphType::VertexIterator;
+  using IteratorType = typename UndirectedAdjacencyList<VertexIdType>::VertexIterator;
 
 public:
-  Vertices(const GraphImpl&);
+  VertexIterator(const typename UndirectedAdjacencyList<VertexIdType>::Impl&);
 
-  typename Vertex<GraphType>::Iterator
+  typename Vertex<UndirectedAdjacencyList, VertexIdType>::Iterator
   begin() const;
 
-  typename Vertex<GraphType>::Iterator
+  typename Vertex<UndirectedAdjacencyList, VertexIdType>::Iterator
   end() const;
 
 private:
-  const GraphImpl& m_graph;
-};
+  const typename UndirectedAdjacencyList<VertexIdType>::Impl& m_graph;
+}; // class VertexIterator<UndirectedAdjacencyList, VertexIdType>
 
 #endif // VERTEX_HPP_

@@ -68,6 +68,6 @@ struct GraphType<BoostGraph, UnsignedType, typename std::enable_if<std::is_same<
  * @brief  Boost undirected graph type using VertexInfo as vertex bundled properties.
  */
 template <typename UnsignedType>
-using UndirectedGraphType = GraphType<UndirectedGraph<UnsignedType>, UnsignedType>;
+using UndirectedAdjacencyList = GraphType<UndirectedGraph<UnsignedType>, UnsignedType>;
 
 #endif // GRAPHTYPE_HPP_
