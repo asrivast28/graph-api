@@ -13,6 +13,61 @@
 #include <unordered_set>
 #include <vector>
 
+/**
+ * @brief  Enumeration class for different graph file types. 
+ */
+enum class GraphFileType {
+  EDGE_LIST,
+  INCIDENCE_MATRIX
+};
+
+/**
+ * @brief  Class that provides the functionality for reading a graph file. 
+ *
+ * @tparam FileType      The type of file to be read.
+ * @tparam VertexIdType  Unsigned type for storing vertex ids.
+ */
+template <enum GraphFileType FileType, typename VertexIdType>
+class GraphFile {
+};
+
+/**
+ * @brief  Partial specialization of GraphFile class for FileType = GraphFileType::EDGE_LIST.
+ */
+template <typename VertexIdType>
+class GraphFile<GraphFileType::EDGE_LIST, VertexIdType> {
+public:
+  GraphFile(const std::string& fileName);
+
+  const std::vector<std::pair<VertexIdType, VertexIdType>>&
+  edgeList() const;
+
+  const std::unordered_set<VertexIdType>&
+  idSet() const;
+
+private:
+  std::vector<std::pair<VertexIdType, VertexIdType>> m_edgeList;
+  std::unordered_set<VertexIdType> m_idSet;
+};
+
+/**
+ * @brief  Partial specialization of GraphFile class for FileType = GraphFileType::INCIDENCE_MATRIX.
+ */
+template <typename VertexIdType>
+class GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType> {
+public:
+  GraphFile(const std::string& fileName);
+
+  const std::vector<std::pair<VertexIdType, VertexIdType>>&
+  edgeList() const;
+
+  const std::unordered_set<VertexIdType>&
+  idSet() const;
+
+private:
+  std::vector<std::pair<VertexIdType, VertexIdType>> m_edgeList;
+  std::unordered_set<VertexIdType> m_idSet;
+};
 
 /**
  * @brief  Skeleton class that outlines the functionality that should be provided by graph class.
@@ -20,7 +75,7 @@
  * @tparam GraphType     Type of the graph implementation.
  * @tparam VertexIdType  Unsigned type for storing vertex ids.
  */
-template <template <typename> class GraphType, typename UnsignedType>
+template <enum GraphFileType FileType, template <typename> class GraphType, typename UnsignedType>
 class GraphSkeleton {
 public:
   using VertexIdType = UnsignedType;
@@ -60,11 +115,7 @@ public:
 protected:
   virtual
   void
-  read(const std::string&, std::vector<std::pair<VertexIdType, VertexIdType>>&, std::unordered_set<VertexIdType>&) const;
-
-  virtual
-  void
-  build(const std::vector<std::pair<VertexIdType, VertexIdType>>&, const std::unordered_set<VertexIdType>&) = 0;
+  build(const GraphFile<FileType, VertexIdType>&) = 0;
 }; // class GraphSkeleton
 
 /**
@@ -73,15 +124,15 @@ protected:
  * @tparam GraphType     Type of the graph implementation.
  * @tparam VertexIdType  Unsigned type for storing vertex ids.
  */
-template <template <typename> class GraphType, typename VertexIdType>
-class Graph : public GraphSkeleton<GraphType, VertexIdType> {
+template <enum GraphFileType FileType, template <typename> class GraphType, typename VertexIdType>
+class Graph : public GraphSkeleton<FileType, GraphType, VertexIdType> {
 }; // class Graph
 
 /**
  * @brief  Partial specialization of Graph class for GraphType = UndirectedAdjacencyList.
  */
-template <typename VertexIdType>
-class Graph<UndirectedAdjacencyList, VertexIdType> : public GraphSkeleton<UndirectedAdjacencyList, VertexIdType> {
+template <enum GraphFileType FileType, typename VertexIdType>
+class Graph<FileType, UndirectedAdjacencyList, VertexIdType> : public GraphSkeleton<FileType, UndirectedAdjacencyList, VertexIdType> {
 public:
   Graph(const std::string&);
 
@@ -91,7 +142,7 @@ public:
   VertexIdType
   vertexCount() const;
 
-  typename GraphSkeleton<UndirectedAdjacencyList, VertexIdType>::Vertex
+  typename GraphSkeleton<FileType, UndirectedAdjacencyList, VertexIdType>::Vertex
   getVertexFromId(const VertexIdType&) const;
 
   VertexIdType
@@ -110,7 +161,7 @@ public:
 
 private:
   void
-  build(const std::vector<std::pair<VertexIdType, VertexIdType>>&, const std::unordered_set<VertexIdType>&);
+  build(const GraphFile<FileType, VertexIdType>&);
 
 private:
   typename UndirectedAdjacencyList<VertexIdType>::Impl m_graph;
