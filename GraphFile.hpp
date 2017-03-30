@@ -13,7 +13,6 @@
  * @brief  Enumeration class for different graph file types. 
  */
 enum class GraphFileType {
-  NONE,
   EDGE_LIST,
   INCIDENCE_MATRIX
 };
@@ -27,25 +26,6 @@ enum class GraphFileType {
 template <enum GraphFileType FileType, typename VertexIdType>
 class GraphFile {
 }; // class GraphFile
-
-/**
- * @brief  Partial specialization of GraphFile class for FileType = GraphFileType::EDGE_LIST.
- */
-template <typename VertexIdType>
-class GraphFile<GraphFileType::NONE, VertexIdType> {
-public:
-  GraphFile(const std::string& = "");
-
-  const std::vector<std::pair<VertexIdType, VertexIdType>>&
-  edgeList() const;
-
-  const std::unordered_set<VertexIdType>&
-  idSet() const;
-
-private:
-  std::vector<std::pair<VertexIdType, VertexIdType>> m_edgeList;
-  std::unordered_set<VertexIdType> m_idSet;
-}; // class GraphFile<GraphFileType::NONE, VertexIdType>
 
 /**
  * @brief  Partial specialization of GraphFile class for FileType = GraphFileType::EDGE_LIST.

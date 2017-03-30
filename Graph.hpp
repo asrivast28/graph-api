@@ -11,7 +11,6 @@
 #include "Vertex.hpp"
 
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 
@@ -21,7 +20,7 @@
  * @tparam GraphType     Type of the graph implementation.
  * @tparam VertexIdType  Unsigned type for storing vertex ids.
  */
-template <template <typename> class GraphType, typename UnsignedType, enum GraphFileType FileType>
+template <template <typename> class GraphType, typename UnsignedType>
 class GraphSkeleton {
 public:
   using VertexIdType = UnsignedType;
@@ -61,7 +60,7 @@ public:
 protected:
   virtual
   void
-  build(const GraphFile<FileType, VertexIdType>&) = 0;
+  build(const std::vector<std::pair<VertexIdType, VertexIdType>>&, const std::unordered_set<VertexIdType>&) = 0;
 }; // class GraphSkeleton
 
 /**
@@ -70,17 +69,17 @@ protected:
  * @tparam GraphType     Type of the graph implementation.
  * @tparam VertexIdType  Unsigned type for storing vertex ids.
  */
-template <template <typename> class GraphType, typename VertexIdType, enum GraphFileType FileType = GraphFileType::NONE>
-class Graph : public GraphSkeleton<GraphType, VertexIdType, FileType> {
+template <template <typename> class GraphType, typename VertexIdType>
+class Graph : public GraphSkeleton<GraphType, VertexIdType> {
 }; // class Graph
 
 /**
  * @brief  Partial specialization of Graph class for GraphType = UndirectedAdjacencyList.
  */
-template <typename VertexIdType, enum GraphFileType FileType>
-class Graph<UndirectedAdjacencyList, VertexIdType, FileType> : public GraphSkeleton<UndirectedAdjacencyList, VertexIdType, FileType> {
+template <typename VertexIdType>
+class Graph<UndirectedAdjacencyList, VertexIdType> : public GraphSkeleton<UndirectedAdjacencyList, VertexIdType> {
 public:
-  Graph(const std::string&);
+  Graph(const std::string&, const enum GraphFileType);
 
   VertexIterator<UndirectedAdjacencyList, VertexIdType>
   vertices() const;
@@ -88,7 +87,7 @@ public:
   VertexIdType
   vertexCount() const;
 
-  typename GraphSkeleton<UndirectedAdjacencyList, VertexIdType, FileType>::Vertex
+  typename GraphSkeleton<UndirectedAdjacencyList, VertexIdType>::Vertex
   getVertexFromId(const VertexIdType&) const;
 
   VertexIdType
@@ -107,7 +106,7 @@ public:
 
 private:
   void
-  build(const GraphFile<FileType, VertexIdType>&);
+  build(const std::vector<std::pair<VertexIdType, VertexIdType>>&, const std::unordered_set<VertexIdType>&);
 
 private:
   typename UndirectedAdjacencyList<VertexIdType>::Impl m_graph;

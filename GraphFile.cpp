@@ -16,41 +16,6 @@
  * @param fileName  Name of the file from which graph is to be read.
  */
 template <typename VertexIdType>
-GraphFile<GraphFileType::NONE, VertexIdType>::GraphFile(
-  const std::string& 
-) : m_edgeList(),
-    m_idSet()
-{
-}
-
-/**
- * @brief  Returns the list of all the edges read from the file.
- */
-template <typename VertexIdType>
-const std::vector<std::pair<VertexIdType, VertexIdType>>&
-GraphFile<GraphFileType::NONE, VertexIdType>::edgeList(
-) const
-{
-  return m_edgeList;
-}
-
-/**
- * @brief  Returns the set of all the vertex ids read from the file. 
- */
-template <typename VertexIdType>
-const std::unordered_set<VertexIdType>&
-GraphFile<GraphFileType::NONE, VertexIdType>::idSet(
-) const
-{
-  return m_idSet;
-}
-
-/**
- * @brief  Constructor that reads edge list from the given file.
- *
- * @param fileName  Name of the file from which graph is to be read.
- */
-template <typename VertexIdType>
 GraphFile<GraphFileType::EDGE_LIST, VertexIdType>::GraphFile(
   const std::string& fileName
 ) : m_edgeList(),
@@ -162,9 +127,6 @@ GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::idSet(
 }
 
 // Explicit instantiation.
-template class GraphFile<GraphFileType::NONE, unsigned>;
-template class GraphFile<GraphFileType::NONE, size_t>;
-
 template class GraphFile<GraphFileType::EDGE_LIST, unsigned>;
 template class GraphFile<GraphFileType::EDGE_LIST, size_t>;
 
