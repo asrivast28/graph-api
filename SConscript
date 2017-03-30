@@ -9,6 +9,7 @@ Import('env')
 libName = 'graph'
 
 srcFiles = [
+            'GraphFile.cpp',
             'Edge.cpp',
             'Vertex.cpp',
             'Graph.cpp',

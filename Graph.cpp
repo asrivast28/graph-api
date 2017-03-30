@@ -4,126 +4,6 @@
  */
 #include "Graph.hpp"
 
-#include <fstream>
-#include <regex>
-#include <sstream>
-
-
-/**
- * @brief  Constructor that reads edge list from the given file.
- *
- * @param fileName  Name of the file from which graph is to be read.
- */
-template <typename VertexIdType>
-GraphFile<GraphFileType::EDGE_LIST, VertexIdType>::GraphFile(
-  const std::string& fileName
-) : m_edgeList(),
-    m_idSet()
-{
-  static const std::regex edgePattern("^\\s*\\d+\\s+\\d+\\s*$");
-
-  std::ifstream graphFile(fileName);
-  std::string line;
-  while (std::getline(graphFile, line)) {
-    // Read a line if it matches the edge list pattern.
-    if (std::regex_search(line, edgePattern)) {
-      std::istringstream is(line);
-      VertexIdType u, v;
-      is >> u >> v;
-      m_edgeList.push_back(std::make_pair(u, v));
-      m_idSet.insert(u);
-      m_idSet.insert(v);
-    }
-  }
-}
-
-/**
- * @brief  Returns the list of all the edges read from the file.
- */
-template <typename VertexIdType>
-const std::vector<std::pair<VertexIdType, VertexIdType>>&
-GraphFile<GraphFileType::EDGE_LIST, VertexIdType>::edgeList(
-) const
-{
-  assert(m_edgeList.size() > 0);
-  return m_edgeList;
-}
-
-/**
- * @brief  Returns the set of all the vertex ids read from the file. 
- */
-template <typename VertexIdType>
-const std::unordered_set<VertexIdType>&
-GraphFile<GraphFileType::EDGE_LIST, VertexIdType>::idSet(
-) const
-{
-  return m_idSet;
-}
-
-/**
- * @brief  Constructor that reads edge list from the given file.
- *
- * @param fileName  Name of the file from which graph is to be read.
- * @param edgeList  List of all the edges read from the file.
- * @param idSet     Set of all the ids read from the file.
- */
-template <typename VertexIdType>
-GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::GraphFile(
-  const std::string& fileName
-) : m_edgeList(),
-    m_idSet()
-{
-  std::ifstream graphFile(fileName);
-  std::string line;
-  const std::pair<VertexIdType, VertexIdType> defaultEdge = std::make_pair(0, 0);
-  while (std::getline(graphFile, line)) {
-    std::istringstream is(line);
-    VertexIdType u;
-    size_t edgeIndex;
-    bool edgeExists;
-    is >> u >> edgeIndex >> edgeExists;
-    if (!edgeExists) {
-      continue;
-    }
-    if (edgeIndex > m_edgeList.size()) {
-      m_edgeList.resize(edgeIndex, defaultEdge);
-    }
-    std::pair<VertexIdType, VertexIdType>& thisEdge = m_edgeList[edgeIndex - 1];
-    if (thisEdge.first == 0) {
-      thisEdge.first = u;
-    }
-    else if (thisEdge.second == 0) {
-      thisEdge.second = u;
-    }
-    else {
-      throw std::runtime_error("Edge " + std::to_string(edgeIndex) + " has more than two vertices!");
-    }
-    m_idSet.insert(u);
-  }
-}
-
-/**
- * @brief  Returns the list of all the edges read from the file.
- */
-template <typename VertexIdType>
-const std::vector<std::pair<VertexIdType, VertexIdType>>&
-GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::edgeList(
-) const
-{
-  assert(m_edgeList.size() > 0);
-  return m_edgeList;
-}
-
-/**
- * @brief  Returns the set of all the vertex ids read from the file. 
- */
-template <typename VertexIdType>
-const std::unordered_set<VertexIdType>&
-GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::idSet(
-) const
-{
-  return m_idSet;
-}
 
 /**
  * @brief  Function that builds an in-memory graph from the given edge list.
@@ -131,9 +11,9 @@ GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::idSet(
  * @param edgeList  List of all the edges in the graph to be built.
  * @param idSet     Set of all the vertex ids in the graph.
  */
-template <enum GraphFileType FileType, typename VertexIdType>
+template <typename VertexIdType, enum GraphFileType FileType>
 void
-Graph<FileType, UndirectedAdjacencyList, VertexIdType>::build(
+Graph<UndirectedAdjacencyList, VertexIdType, FileType>::build(
   const GraphFile<FileType, VertexIdType>& graphFile
 )
 {
@@ -155,8 +35,8 @@ Graph<FileType, UndirectedAdjacencyList, VertexIdType>::build(
  *
  * @param fileName  Name of the file from which graph is to be read.
  */
-template <enum GraphFileType FileType, typename VertexIdType>
-Graph<FileType, UndirectedAdjacencyList, VertexIdType>::Graph(
+template <typename VertexIdType, enum GraphFileType FileType>
+Graph<UndirectedAdjacencyList, VertexIdType, FileType>::Graph(
   const std::string& fileName
 ) : m_graph(),
     m_idVertexMap()
@@ -168,9 +48,9 @@ Graph<FileType, UndirectedAdjacencyList, VertexIdType>::Graph(
 /**
  * @brief  Returns an iterator for all the vertices in the graph.
  */
-template <enum GraphFileType FileType, typename VertexIdType>
+template <typename VertexIdType, enum GraphFileType FileType>
 VertexIterator<UndirectedAdjacencyList, VertexIdType>
-Graph<FileType, UndirectedAdjacencyList, VertexIdType>::vertices(
+Graph<UndirectedAdjacencyList, VertexIdType, FileType>::vertices(
 ) const
 {
   return VertexIterator<UndirectedAdjacencyList, VertexIdType>(m_graph);
@@ -179,29 +59,29 @@ Graph<FileType, UndirectedAdjacencyList, VertexIdType>::vertices(
 /**
  * @brief  Returns the number of vertices in the graph.
  */
-template <enum GraphFileType FileType, typename VertexIdType>
+template <typename VertexIdType, enum GraphFileType FileType>
 VertexIdType
-Graph<FileType, UndirectedAdjacencyList, VertexIdType>::vertexCount(
+Graph<UndirectedAdjacencyList, VertexIdType, FileType>::vertexCount(
 ) const
 {
   return static_cast<VertexIdType>(boost::num_vertices(m_graph));
 }
 
-template <enum GraphFileType FileType, typename VertexIdType>
-typename GraphSkeleton<FileType, UndirectedAdjacencyList, VertexIdType>::Vertex
-Graph<FileType, UndirectedAdjacencyList, VertexIdType>::getVertexFromId(
+template <typename VertexIdType, enum GraphFileType FileType>
+typename GraphSkeleton<UndirectedAdjacencyList, VertexIdType, FileType>::Vertex
+Graph<UndirectedAdjacencyList, VertexIdType, FileType>::getVertexFromId(
   const VertexIdType& v
 ) const
 {
-  return typename GraphSkeleton<FileType, UndirectedAdjacencyList, VertexIdType>::Vertex(m_graph, m_idVertexMap.at(v));
+  return typename GraphSkeleton<UndirectedAdjacencyList, VertexIdType, FileType>::Vertex(m_graph, m_idVertexMap.at(v));
 }
 
 /**
  * @brief  Returns the maximum id of the vertices in the graph.
  */
-template <enum GraphFileType FileType, typename VertexIdType>
+template <typename VertexIdType, enum GraphFileType FileType>
 VertexIdType
-Graph<FileType, UndirectedAdjacencyList, VertexIdType>::maxVertexId(
+Graph<UndirectedAdjacencyList, VertexIdType, FileType>::maxVertexId(
 ) const
 {
   using MapPairType = std::pair<VertexIdType, typename UndirectedAdjacencyList<VertexIdType>::VertexType>;
@@ -213,9 +93,9 @@ Graph<FileType, UndirectedAdjacencyList, VertexIdType>::maxVertexId(
 /**
  * @brief  Returns an iterator for all the edges in the graph.
  */
-template <enum GraphFileType FileType, typename VertexIdType>
+template <typename VertexIdType, enum GraphFileType FileType>
 EdgeIterator<UndirectedAdjacencyList, VertexIdType>
-Graph<FileType, UndirectedAdjacencyList, VertexIdType>::edges(
+Graph<UndirectedAdjacencyList, VertexIdType, FileType>::edges(
 ) const
 {
   return EdgeIterator<UndirectedAdjacencyList, VertexIdType>(m_graph, boost::edges(m_graph));
@@ -224,9 +104,9 @@ Graph<FileType, UndirectedAdjacencyList, VertexIdType>::edges(
 /**
  * @brief  Returns the number of edges in the graph.
  */
-template <enum GraphFileType FileType, typename VertexIdType>
+template <typename VertexIdType, enum GraphFileType FileType>
 size_t
-Graph<FileType, UndirectedAdjacencyList, VertexIdType>::edgeCount(
+Graph<UndirectedAdjacencyList, VertexIdType, FileType>::edgeCount(
 ) const
 {
   return static_cast<size_t>(boost::num_edges(m_graph));
@@ -235,9 +115,9 @@ Graph<FileType, UndirectedAdjacencyList, VertexIdType>::edgeCount(
 /**
  * @brief  Checks the existence of an edge between the given vertices.
  */
-template <enum GraphFileType FileType, typename VertexIdType>
+template <typename VertexIdType, enum GraphFileType FileType>
 bool
-Graph<FileType, UndirectedAdjacencyList, VertexIdType>::edgeExists(
+Graph<UndirectedAdjacencyList, VertexIdType, FileType>::edgeExists(
   const Vertex<UndirectedAdjacencyList, VertexIdType>& u,
   const Vertex<UndirectedAdjacencyList, VertexIdType>& v
 ) const
@@ -248,15 +128,17 @@ Graph<FileType, UndirectedAdjacencyList, VertexIdType>::edgeExists(
 /**
  * @brief  Default destructor.
  */
-template <enum GraphFileType FileType, typename VertexIdType>
-Graph<FileType, UndirectedAdjacencyList, VertexIdType>::~Graph(
+template <typename VertexIdType, enum GraphFileType FileType>
+Graph<UndirectedAdjacencyList, VertexIdType, FileType>::~Graph(
 )
 {
 }
 
 // Explicit instantiation.
-template class Graph<GraphFileType::EDGE_LIST, UndirectedAdjacencyList, unsigned>;
-template class Graph<GraphFileType::INCIDENCE_MATRIX, UndirectedAdjacencyList, unsigned>;
+template class Graph<UndirectedAdjacencyList, unsigned>;
+template class Graph<UndirectedAdjacencyList, unsigned, GraphFileType::EDGE_LIST>;
+template class Graph<UndirectedAdjacencyList, unsigned, GraphFileType::INCIDENCE_MATRIX>;
 
-template class Graph<GraphFileType::EDGE_LIST, UndirectedAdjacencyList, size_t>;
-template class Graph<GraphFileType::INCIDENCE_MATRIX, UndirectedAdjacencyList, size_t>;
+template class Graph<UndirectedAdjacencyList, size_t>;
+template class Graph<UndirectedAdjacencyList, size_t, GraphFileType::EDGE_LIST>;
+template class Graph<UndirectedAdjacencyList, size_t, GraphFileType::INCIDENCE_MATRIX>;
