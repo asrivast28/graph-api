@@ -11,15 +11,15 @@
  * @param edgeList  List of all the edges in the graph to be built.
  * @param idSet     Set of all the vertex ids in the graph.
  */
-template <typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType>
 void
-Graph<UndirectedAdjacencyList, VertexIdType>::build(
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::build(
   const std::vector<std::pair<VertexIdType, VertexIdType>>& edgeList,
   const std::unordered_set<VertexIdType>& idSet
 )
 {
-  m_graph = typename UndirectedAdjacencyList<VertexIdType>::Impl(idSet.size());
-  typename UndirectedAdjacencyList<VertexIdType>::VertexIterator v = boost::vertices(m_graph).first;
+  m_graph = typename GraphType<VertexIdType>::Impl(idSet.size());
+  typename GraphType<VertexIdType>::VertexIterator v = boost::vertices(m_graph).first;
   for (const VertexIdType& id : idSet) {
     m_graph[*v].id = id;
     m_idVertexMap.insert(std::make_pair(id, *v));
@@ -37,8 +37,8 @@ Graph<UndirectedAdjacencyList, VertexIdType>::build(
  * @param fileName  Name of the file from which graph is to be read.
  * @param fileType  Type of the file from which graph is to be read.
  */
-template <typename VertexIdType>
-Graph<UndirectedAdjacencyList, VertexIdType>::Graph(
+template <template <typename> class GraphType, typename VertexIdType>
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Graph(
   const std::string& fileName,
   const enum GraphFileType fileType
 ) : m_graph(),
@@ -52,48 +52,52 @@ Graph<UndirectedAdjacencyList, VertexIdType>::Graph(
     GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType> graphFile(fileName);
     build(graphFile.edgeList(), graphFile.idSet());
   }
+  else if (fileType == GraphFileType::ARG_DATABASE) {
+    GraphFile<GraphFileType::ARG_DATABASE, VertexIdType> graphFile(fileName);
+    build(graphFile.edgeList(), graphFile.idSet());
+  }
 }
 
 /**
  * @brief  Returns an iterator for all the vertices in the graph.
  */
-template <typename VertexIdType>
-VertexIterator<UndirectedAdjacencyList, VertexIdType>
-Graph<UndirectedAdjacencyList, VertexIdType>::vertices(
+template <template <typename> class GraphType, typename VertexIdType>
+VertexIterator<GraphType, VertexIdType>
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::vertices(
 ) const
 {
-  return VertexIterator<UndirectedAdjacencyList, VertexIdType>(m_graph);
+  return VertexIterator<GraphType, VertexIdType>(m_graph);
 }
 
 /**
  * @brief  Returns the number of vertices in the graph.
  */
-template <typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType>
 VertexIdType
-Graph<UndirectedAdjacencyList, VertexIdType>::vertexCount(
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::vertexCount(
 ) const
 {
   return static_cast<VertexIdType>(boost::num_vertices(m_graph));
 }
 
-template <typename VertexIdType>
-typename GraphSkeleton<UndirectedAdjacencyList, VertexIdType>::Vertex
-Graph<UndirectedAdjacencyList, VertexIdType>::getVertexFromId(
+template <template <typename> class GraphType, typename VertexIdType>
+typename Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Vertex
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::getVertexFromId(
   const VertexIdType& v
 ) const
 {
-  return typename GraphSkeleton<UndirectedAdjacencyList, VertexIdType>::Vertex(m_graph, m_idVertexMap.at(v));
+  return Vertex(m_graph, m_idVertexMap.at(v));
 }
 
 /**
  * @brief  Returns the maximum id of the vertices in the graph.
  */
-template <typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType>
 VertexIdType
-Graph<UndirectedAdjacencyList, VertexIdType>::maxVertexId(
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::maxVertexId(
 ) const
 {
-  using MapPairType = std::pair<VertexIdType, typename UndirectedAdjacencyList<VertexIdType>::VertexType>;
+  using MapPairType = std::pair<VertexIdType, typename GraphType<VertexIdType>::VertexType>;
   return std::max_element(m_idVertexMap.begin(), m_idVertexMap.end(),
                           [](const MapPairType& a, const MapPairType& b) { return a.first < b.first; }
                          )->first;
@@ -102,20 +106,20 @@ Graph<UndirectedAdjacencyList, VertexIdType>::maxVertexId(
 /**
  * @brief  Returns an iterator for all the edges in the graph.
  */
-template <typename VertexIdType>
-EdgeIterator<UndirectedAdjacencyList, VertexIdType>
-Graph<UndirectedAdjacencyList, VertexIdType>::edges(
+template <template <typename> class GraphType, typename VertexIdType>
+EdgeIterator<GraphType, VertexIdType>
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::edges(
 ) const
 {
-  return EdgeIterator<UndirectedAdjacencyList, VertexIdType>(m_graph, boost::edges(m_graph));
+  return EdgeIterator<GraphType, VertexIdType>(m_graph, boost::edges(m_graph));
 }
 
 /**
  * @brief  Returns the number of edges in the graph.
  */
-template <typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType>
 size_t
-Graph<UndirectedAdjacencyList, VertexIdType>::edgeCount(
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::edgeCount(
 ) const
 {
   return static_cast<size_t>(boost::num_edges(m_graph));
@@ -124,11 +128,11 @@ Graph<UndirectedAdjacencyList, VertexIdType>::edgeCount(
 /**
  * @brief  Checks the existence of an edge between the given vertices.
  */
-template <typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType>
 bool
-Graph<UndirectedAdjacencyList, VertexIdType>::edgeExists(
-  const Vertex<UndirectedAdjacencyList, VertexIdType>& u,
-  const Vertex<UndirectedAdjacencyList, VertexIdType>& v
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::edgeExists(
+  const Vertex& u,
+  const Vertex& v
 ) const
 {
   return u.hasEdgeTo(v);
@@ -137,8 +141,8 @@ Graph<UndirectedAdjacencyList, VertexIdType>::edgeExists(
 /**
  * @brief  Default destructor.
  */
-template <typename VertexIdType>
-Graph<UndirectedAdjacencyList, VertexIdType>::~Graph(
+template <template <typename> class GraphType, typename VertexIdType>
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::~Graph(
 )
 {
 }

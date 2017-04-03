@@ -70,4 +70,10 @@ struct GraphType<BoostGraph, UnsignedType, typename std::enable_if<std::is_same<
 template <typename UnsignedType>
 using UndirectedAdjacencyList = GraphType<UndirectedGraph<UnsignedType>, UnsignedType>;
 
+/**
+ * @brief  Used for enabling a template only for boost graph types.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+using EnableBoost = typename std::enable_if<std::is_same<decltype(boost::graph_traits<typename GraphType<VertexIdType>::Impl>::null_vertex()), typename GraphType<VertexIdType>::VertexType>::value>::type;
+
 #endif // GRAPHTYPE_HPP_

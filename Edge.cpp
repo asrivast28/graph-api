@@ -13,8 +13,8 @@
  * @param graph  Instance of the graph implementation.
  * @param edge   Instance of the edge implementation.
  */
-template <typename VertexIdType>
-Edge<UndirectedAdjacencyList, VertexIdType>::Edge(
+template <template <typename> class GraphType, typename VertexIdType>
+Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Edge(
   const GraphImpl& graph,
   const EdgeType& edge
 ) : m_graph(graph),
@@ -25,23 +25,23 @@ Edge<UndirectedAdjacencyList, VertexIdType>::Edge(
 /**
  * @brief  Returns the source vertex of this edge.
  */
-template <typename VertexIdType>
-typename ::Vertex<UndirectedAdjacencyList, VertexIdType>
-Edge<UndirectedAdjacencyList, VertexIdType>::source(
+template <template <typename> class GraphType, typename VertexIdType>
+typename ::Vertex<GraphType, VertexIdType>
+Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::source(
 ) const
 {
-  return typename ::Vertex<UndirectedAdjacencyList, VertexIdType>(m_graph, boost::source(m_edge, m_graph));
+  return typename ::Vertex<GraphType, VertexIdType>(m_graph, boost::source(m_edge, m_graph));
 }
 
 /**
  * @brief  Returns the target vertex of this edge.
  */
-template <typename VertexIdType>
-typename ::Vertex<UndirectedAdjacencyList, VertexIdType>
-Edge<UndirectedAdjacencyList, VertexIdType>::target(
+template <template <typename> class GraphType, typename VertexIdType>
+typename ::Vertex<GraphType, VertexIdType>
+Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::target(
 ) const
 {
-  return typename ::Vertex<UndirectedAdjacencyList, VertexIdType>(m_graph, boost::target(m_edge, m_graph));
+  return typename ::Vertex<GraphType, VertexIdType>(m_graph, boost::target(m_edge, m_graph));
 }
 
 /**
@@ -50,9 +50,9 @@ Edge<UndirectedAdjacencyList, VertexIdType>::target(
  * @param graph     Instance of the graph implementation.
  * @param vertices  Pair of begin and end iterator implementations over the edges.
  */
-template <typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
-Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>::Iterator(
+Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>::Iterator(
   const GraphImpl& graph,
   const std::pair<IteratorType, IteratorType>& edges
 ) : m_graph(graph),
@@ -64,10 +64,10 @@ Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>::Iterator(
 /**
  * @brief  Increments the iterator.
  */
-template <typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
-typename Edge<UndirectedAdjacencyList, VertexIdType>::template Iterator<IteratorType>&
-Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>::operator++(
+typename Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::template Iterator<IteratorType>&
+Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>::operator++(
 )
 {
   if (m_current != m_end) {
@@ -79,11 +79,11 @@ Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>::operator++(
 /**
  * @brief  Checks if the iterator is same as another iterator.
  */
-template <typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
 bool
-Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>::operator==(
-  const Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>& that
+Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>::operator==(
+  const Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>& that
 ) const
 {
   return (m_current == that.m_current);
@@ -92,11 +92,11 @@ Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>::operator==(
 /**
  * @brief  Checks if the iterator is NOT same as another iterator.
  */
-template <typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
 bool
-Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>::operator!=(
-  const Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>& that
+Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>::operator!=(
+  const Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>& that
 ) const
 {
   return (m_current != that.m_current);
@@ -105,13 +105,13 @@ Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>::operator!=(
 /**
  * @brief  Returns the edge that the iterator is currently pointing to.
  */
-template <typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
-typename ::Edge<UndirectedAdjacencyList, VertexIdType>
-Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>::operator*(
+typename ::Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
+Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>::operator*(
 )
 {
-  return Edge<UndirectedAdjacencyList, VertexIdType>(m_graph, *m_current);
+  return Edge<GraphType, VertexIdType>(m_graph, *m_current);
 }
 
 /**
@@ -120,9 +120,9 @@ Edge<UndirectedAdjacencyList, VertexIdType>::Iterator<IteratorType>::operator*(
  * @param graph  Instance of the graph implementation.
  * @param edges  Pair of begin and end iterator implementations over the edges.
  */
-template <typename VertexIdType, typename IteratorType>
-EdgeIterator<UndirectedAdjacencyList, VertexIdType, IteratorType>::EdgeIterator(
-  const typename UndirectedAdjacencyList<VertexIdType>::Impl& graph,
+template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
+EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, VertexIdType>>::EdgeIterator(
+  const typename GraphType<VertexIdType>::Impl& graph,
   const std::pair<IteratorType, IteratorType>& edges
 ) : m_graph(graph),
     m_edges(edges)
@@ -132,24 +132,24 @@ EdgeIterator<UndirectedAdjacencyList, VertexIdType, IteratorType>::EdgeIterator(
 /**
  * @brief  Returns the begin iterator over the edges.
  */
-template <typename VertexIdType, typename IteratorType>
-typename Edge<UndirectedAdjacencyList, VertexIdType>::template Iterator<IteratorType>
-EdgeIterator<UndirectedAdjacencyList, VertexIdType, IteratorType>::begin(
+template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
+typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
+EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, VertexIdType>>::begin(
 ) const
 {
-  return typename Edge<UndirectedAdjacencyList, VertexIdType>::template Iterator<IteratorType>(m_graph, m_edges);
+  return typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>(m_graph, m_edges);
 }
 
 /**
  * @brief  Returns the end iterator over the edges.
  */
-template <typename VertexIdType, typename IteratorType>
-typename Edge<UndirectedAdjacencyList, VertexIdType>::template Iterator<IteratorType>
-EdgeIterator<UndirectedAdjacencyList, VertexIdType, IteratorType>::end(
+template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
+typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
+EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, VertexIdType>>::end(
 ) const
 {
   IteratorType end = m_edges.second;
-  return typename Edge<UndirectedAdjacencyList, VertexIdType>::template Iterator<IteratorType>(m_graph, std::make_pair(end, end));
+  return typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>(m_graph, std::make_pair(end, end));
 }
 
 // Explicit instantiation.

@@ -11,26 +11,8 @@
 
 
 // Forward declaration of Vertex class.
-template <template <typename> class GraphType, typename VertexIdType>
+template <template <typename> class GraphType, typename VertexIdType, typename Enable = void>
 class Vertex;
-
-/**
- * @brief  Skeleton class that outlines the functionality that should be provided by edge class.
- *
- * @tparam GraphType     Type of the graph implementation.
- * @tparam VertexIdType  Unsigned type for storing vertex ids.
- */
-template <template <typename> class GraphType, typename VertexIdType>
-class EdgeSkeleton {
-public:
-  virtual
-  Vertex<GraphType, VertexIdType>
-  source() const;
-
-  virtual
-  Vertex<GraphType, VertexIdType>
-  target() const = 0;
-}; // class EdgeSkeleton
 
 /**
  * @brief  Class that provides edge functionality.
@@ -38,21 +20,21 @@ public:
  * @tparam GraphType     Type of the graph implementation.
  * @tparam VertexIdType  Unsigned type for storing vertex ids.
  */
-template <template <typename> class GraphType, typename VertexIdType>
-class Edge : public EdgeSkeleton<GraphType, VertexIdType> {
+template <template <typename> class GraphType, typename VertexIdType, typename Enable = void>
+class Edge {
 public:
   template <typename IteratorType>
   class Iterator;
 };
 
 /**
- * @brief  Partial specialization of Edge class for GraphType = UndirectedAdjacencyList.
+ * @brief  Partial specialization of Edge class for Boost graphs.
  */
-template <typename VertexIdType>
-class Edge<UndirectedAdjacencyList, VertexIdType> : public EdgeSkeleton<UndirectedAdjacencyList, VertexIdType> {
+template <template <typename> class GraphType, typename VertexIdType>
+class Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>> {
 private:
-  using GraphImpl = typename UndirectedAdjacencyList<VertexIdType>::Impl;
-  using EdgeType = typename UndirectedAdjacencyList<VertexIdType>::EdgeType;
+  using GraphImpl = typename GraphType<VertexIdType>::Impl;
+  using EdgeType = typename GraphType<VertexIdType>::EdgeType;
 
 public:
   /**
@@ -87,34 +69,16 @@ public:
 public:
   Edge(const GraphImpl&, const EdgeType&);
 
-  Vertex<UndirectedAdjacencyList, VertexIdType>
+  Vertex<GraphType, VertexIdType>
   source() const;
 
-  Vertex<UndirectedAdjacencyList, VertexIdType>
+  Vertex<GraphType, VertexIdType>
   target() const;
 
 private:
   const GraphImpl& m_graph;
   const EdgeType m_edge;
-}; // class Edge<UndirectedAdjacencyList, VertexIdType>
-
-/**
- * @brief  Skeleton class that outlines the functionality that should be provided by edge iterator provider class.
- *
- * @tparam GraphType     Type of the graph implementation.
- * @tparam VertexIdType  Unsigned type for storing vertex ids.
- */
-template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
-class EdgeIteratorSkeleton {
-public:
-  virtual
-  typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
-  begin() const = 0;
-
-  virtual
-  typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
-  end() const = 0;
-}; // class EdgeIteratorSkeleton
+}; // class Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
 
 /**
  * @brief  Class that provides an iterator over edges of the graph.
@@ -123,27 +87,26 @@ public:
  * @tparam VertexIdType  Unsigned type for storing vertex ids.
  * @tparam IteratorType  Type of the edge iterator.
  */
-template <template <typename> class GraphType, typename VertexIdType, typename IteratorType = typename GraphType<VertexIdType>::EdgeIterator>
-class EdgeIterator : public EdgeIteratorSkeleton<GraphType, VertexIdType, IteratorType> {
-}; // class EdgeIterator
+template <template <typename> class GraphType, typename VertexIdType, typename IteratorType = typename GraphType<VertexIdType>::EdgeIterator, typename Enable = void>
+class EdgeIterator;
 
 /**
- * @brief  Partial specialization of EdgeIterator class for GraphType = UndirectedAdjacencyList.
+ * @brief  Partial specialization of EdgeIterator class for Boost graphs.
  */
-template <typename VertexIdType, typename IteratorType>
-class EdgeIterator<UndirectedAdjacencyList, VertexIdType, IteratorType> : public EdgeIteratorSkeleton<UndirectedAdjacencyList, VertexIdType, IteratorType> {
+template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
+class EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, VertexIdType>> {
 public:
-  EdgeIterator(const typename UndirectedAdjacencyList<VertexIdType>::Impl&, const std::pair<IteratorType, IteratorType>&);
+  EdgeIterator(const typename GraphType<VertexIdType>::Impl&, const std::pair<IteratorType, IteratorType>&);
 
-  typename Edge<UndirectedAdjacencyList, VertexIdType>::template Iterator<IteratorType>
+  typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
   begin() const;
 
-  typename Edge<UndirectedAdjacencyList, VertexIdType>::template Iterator<IteratorType>
+  typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
   end() const;
 
 private:
-  const typename UndirectedAdjacencyList<VertexIdType>::Impl& m_graph;
+  const typename GraphType<VertexIdType>::Impl& m_graph;
   const std::pair<IteratorType, IteratorType> m_edges;
-}; // class EdgeIterator<UndirectedAdjacencyList, VertexIdType, IteratorType>
+}; // class EdgeIterator<GraphType, VertexIdType, IteratorType, BoostEnable<GraphType, VertexIdType>>
 
 #endif // EDGE_HPP_
