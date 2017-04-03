@@ -26,9 +26,11 @@ class Graph;
 /**
  * @brief  Partial specialization of Graph class for Boost graphs.
  */
-template <template <typename> class GraphType, typename VertexIdType>
-class Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>> {
+template <template <typename> class GraphType, typename UnsignedType>
+class Graph<GraphType, UnsignedType, EnableBoost<GraphType, UnsignedType>> {
 public:
+  using VertexIdType = UnsignedType;
+
   using Vertex = typename ::Vertex<GraphType, VertexIdType>;
   using Edge = typename ::Edge<GraphType, VertexIdType>;
 
@@ -65,6 +67,6 @@ private:
 private:
   typename GraphType<VertexIdType>::Impl m_graph;
   std::unordered_map<VertexIdType, typename GraphType<VertexIdType>::VertexType> m_idVertexMap;
-}; // class Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
+}; // class Graph<GraphType, UnsignedType, EnableBoost<GraphType, UnsignedType>>
 
 #endif // GRAPH_HPP_

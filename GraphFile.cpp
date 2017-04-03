@@ -51,7 +51,7 @@ GraphFile<GraphFileType::EDGE_LIST, VertexIdType>::edgeList(
 }
 
 /**
- * @brief  Returns the set of all the vertex ids read from the file. 
+ * @brief  Returns the set of all the vertex ids read from the file.
  */
 template <typename VertexIdType>
 const std::unordered_set<VertexIdType>&
@@ -116,11 +116,76 @@ GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::edgeList(
 }
 
 /**
- * @brief  Returns the set of all the vertex ids read from the file. 
+ * @brief  Returns the set of all the vertex ids read from the file.
  */
 template <typename VertexIdType>
 const std::unordered_set<VertexIdType>&
 GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::idSet(
+) const
+{
+  return m_idSet;
+}
+
+template <unsigned WordSize, typename TargetType>
+TargetType
+read_word(
+  std::ifstream& fileStream
+)
+{
+  TargetType var;
+  char buf[sizeof(TargetType)] = {0};
+  fileStream.read(buf, WordSize);
+  memcpy(&var, buf, sizeof(TargetType));
+  return var;
+}
+
+/**
+ * @brief  Constructor that reads edge list from the given file.
+ *
+ * @param fileName  Name of the file from which graph is to be read.
+ * @param edgeList  List of all the edges read from the file.
+ * @param idSet     Set of all the ids read from the file.
+ */
+template <typename VertexIdType>
+GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>::GraphFile(
+  const std::string& fileName
+) : m_edgeList(),
+    m_idSet()
+{
+  std::ifstream graphFile(fileName, std::ios::in | std::ios::binary);
+  VertexIdType nodeCount = read_word<2, VertexIdType>(graphFile);
+  size_t edgeCount = 0;
+  for (VertexIdType u = 1; u <= nodeCount; ++u) {
+    size_t thisEdgeCount = read_word<2, size_t>(graphFile);
+    m_edgeList.resize(edgeCount + thisEdgeCount, std::make_pair(u, 0));
+    for (size_t edge = edgeCount; edge < edgeCount + thisEdgeCount; ++edge) {
+      VertexIdType v = read_word<2, VertexIdType>(graphFile);
+      m_edgeList[edge].second = v + 1;
+      m_idSet.insert(v + 1);
+    }
+    m_idSet.insert(u);
+    edgeCount += thisEdgeCount;
+  }
+}
+
+/**
+ * @brief  Returns the list of all the edges read from the file.
+ */
+template <typename VertexIdType>
+const std::vector<std::pair<VertexIdType, VertexIdType>>&
+GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>::edgeList(
+) const
+{
+  assert(m_edgeList.size() > 0);
+  return m_edgeList;
+}
+
+/**
+ * @brief  Returns the set of all the vertex ids read from the file.
+ */
+template <typename VertexIdType>
+const std::unordered_set<VertexIdType>&
+GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>::idSet(
 ) const
 {
   return m_idSet;
@@ -132,3 +197,6 @@ template class GraphFile<GraphFileType::EDGE_LIST, size_t>;
 
 template class GraphFile<GraphFileType::INCIDENCE_MATRIX, unsigned>;
 template class GraphFile<GraphFileType::INCIDENCE_MATRIX, size_t>;
+
+template class GraphFile<GraphFileType::ARG_DATABASE, unsigned>;
+template class GraphFile<GraphFileType::ARG_DATABASE, size_t>;
