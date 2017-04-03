@@ -46,6 +46,12 @@ template <typename UnsignedType>
 using UndirectedGraph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, VertexInfo<UnsignedType>>;
 
 /**
+ * @brief  Typedef for Boost bidirectional graph using VertexInfo as vertex bundled properties.
+ */
+template <typename UnsignedType>
+using BidirectionalGraph = boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS, VertexInfo<UnsignedType>>;
+
+/**
  * @brief  Graph type for Boost graphs.
  *
  * @tparam BoostGraph    Type of Boost graph implementation.
@@ -69,6 +75,12 @@ struct GraphType<BoostGraph, UnsignedType, typename std::enable_if<std::is_same<
  */
 template <typename UnsignedType>
 using UndirectedAdjacencyList = GraphType<UndirectedGraph<UnsignedType>, UnsignedType>;
+
+/**
+ * @brief  Boost bidirectional graph type using VertexInfo as vertex bundled properties.
+ */
+template <typename UnsignedType>
+using BidirectionalAdjacencyList = GraphType<BidirectionalGraph<UnsignedType>, UnsignedType>;
 
 /**
  * @brief  Used for enabling a template only for boost graph types.

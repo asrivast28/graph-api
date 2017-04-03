@@ -154,16 +154,31 @@ EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, Verte
 
 // Explicit instantiation.
 template class Edge<UndirectedAdjacencyList, unsigned>;
+template class Edge<BidirectionalAdjacencyList, unsigned>;
+
 template class Edge<UndirectedAdjacencyList, size_t>;
+template class Edge<BidirectionalAdjacencyList, size_t>;
 
 template class Edge<UndirectedAdjacencyList, unsigned>::Iterator<UndirectedAdjacencyList<unsigned>::EdgeIterator>;
+template class Edge<BidirectionalAdjacencyList, unsigned>::Iterator<BidirectionalAdjacencyList<unsigned>::EdgeIterator>;
+
 template class Edge<UndirectedAdjacencyList, size_t>::Iterator<UndirectedAdjacencyList<size_t>::EdgeIterator>;
+template class Edge<BidirectionalAdjacencyList, size_t>::Iterator<BidirectionalAdjacencyList<size_t>::EdgeIterator>;
 
 template class Edge<UndirectedAdjacencyList, unsigned>::Iterator<UndirectedAdjacencyList<unsigned>::InEdgeIterator>;
+template class Edge<BidirectionalAdjacencyList, unsigned>::Iterator<BidirectionalAdjacencyList<unsigned>::InEdgeIterator>;
+
 template class Edge<UndirectedAdjacencyList, size_t>::Iterator<UndirectedAdjacencyList<size_t>::InEdgeIterator>;
+template class Edge<BidirectionalAdjacencyList, size_t>::Iterator<BidirectionalAdjacencyList<size_t>::InEdgeIterator>;
 
 template class EdgeIterator<UndirectedAdjacencyList, unsigned, UndirectedAdjacencyList<unsigned>::EdgeIterator>;
+template class EdgeIterator<BidirectionalAdjacencyList, unsigned, BidirectionalAdjacencyList<unsigned>::EdgeIterator>;
+
 template class EdgeIterator<UndirectedAdjacencyList, size_t, UndirectedAdjacencyList<size_t>::EdgeIterator>;
+template class EdgeIterator<BidirectionalAdjacencyList, size_t, BidirectionalAdjacencyList<size_t>::EdgeIterator>;
 
 template class EdgeIterator<UndirectedAdjacencyList, unsigned, UndirectedAdjacencyList<unsigned>::InEdgeIterator>;
+template class EdgeIterator<BidirectionalAdjacencyList, unsigned, BidirectionalAdjacencyList<unsigned>::InEdgeIterator>;
+
 template class EdgeIterator<UndirectedAdjacencyList, size_t, UndirectedAdjacencyList<size_t>::InEdgeIterator>;
+template class EdgeIterator<BidirectionalAdjacencyList, size_t, BidirectionalAdjacencyList<size_t>::InEdgeIterator>;

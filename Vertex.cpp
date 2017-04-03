@@ -167,6 +167,13 @@ VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::e
 
 // Explicit instantiation.
 template class Vertex<UndirectedAdjacencyList, unsigned>;
+template class Vertex<BidirectionalAdjacencyList, unsigned>;
+
 template class Vertex<UndirectedAdjacencyList, size_t>;
+template class Vertex<BidirectionalAdjacencyList, size_t>;
+
 template class VertexIterator<UndirectedAdjacencyList, unsigned>;
+template class VertexIterator<BidirectionalAdjacencyList, unsigned>;
+
 template class VertexIterator<UndirectedAdjacencyList, size_t>;
+template class VertexIterator<BidirectionalAdjacencyList, size_t>;

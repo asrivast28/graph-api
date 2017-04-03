@@ -149,4 +149,7 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::~Graph(
 
 // Explicit instantiation.
 template class Graph<UndirectedAdjacencyList, unsigned>;
+template class Graph<BidirectionalAdjacencyList, unsigned>;
+
 template class Graph<UndirectedAdjacencyList, size_t>;
+template class Graph<BidirectionalAdjacencyList, size_t>;
