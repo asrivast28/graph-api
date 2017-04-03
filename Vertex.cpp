@@ -35,11 +35,11 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::id(
  * @brief  Returns the in degree of this vertex.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-size_t
+VertexIdType
 Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::inDegree(
 ) const
 {
-  return static_cast<size_t>(boost::in_degree(m_vertex, m_graph));
+  return boost::in_degree(m_vertex, m_graph);
 }
 
 /**
@@ -51,6 +51,28 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::inEdges(
 ) const
 {
   return typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>(m_graph, boost::in_edges(m_vertex, m_graph));
+}
+
+/**
+ * @brief  Returns the out degree of this vertex.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+VertexIdType
+Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::outDegree(
+) const
+{
+  return boost::out_degree(m_vertex, m_graph);
+}
+
+/**
+ * @brief  Returns an iterator over the outgoing edges from this vertex.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>
+Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::outEdges(
+) const
+{
+  return typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>(m_graph, boost::out_edges(m_vertex, m_graph));
 }
 
 /**
@@ -166,14 +188,12 @@ VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::e
 }
 
 // Explicit instantiation.
-template class Vertex<UndirectedAdjacencyList, unsigned>;
-template class Vertex<BidirectionalAdjacencyList, unsigned>;
+#define INSTANTIATE_VERTEX(GraphType, VertexIdType)\
+template class Vertex<GraphType, VertexIdType>;\
+template class VertexIterator<GraphType, VertexIdType>
 
-template class Vertex<UndirectedAdjacencyList, size_t>;
-template class Vertex<BidirectionalAdjacencyList, size_t>;
+INSTANTIATE_VERTEX(UndirectedAdjacencyList, unsigned);
+INSTANTIATE_VERTEX(UndirectedAdjacencyList, size_t);
 
-template class VertexIterator<UndirectedAdjacencyList, unsigned>;
-template class VertexIterator<BidirectionalAdjacencyList, unsigned>;
-
-template class VertexIterator<UndirectedAdjacencyList, size_t>;
-template class VertexIterator<BidirectionalAdjacencyList, size_t>;
+INSTANTIATE_VERTEX(BidirectionalAdjacencyList, unsigned);
+INSTANTIATE_VERTEX(BidirectionalAdjacencyList, size_t);

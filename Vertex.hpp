@@ -66,11 +66,17 @@ public:
   VertexIdType
   id() const;
 
-  size_t
+  VertexIdType
   inDegree() const;
 
   typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>
   inEdges() const;
+
+  VertexIdType
+  outDegree() const;
+
+  typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>
+  outEdges() const;
 
   bool
   hasEdgeTo(const Vertex<GraphType, VertexIdType>&) const;
