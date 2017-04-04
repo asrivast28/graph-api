@@ -1,8 +1,9 @@
 /**
- * @file Vertex.cpp
- * @brief Implementation of Vertex and the corresponding iterator functions.
+ * @file Vertex.hpp
+ * @brief Details of Vertex and the corresponding iterator functions.
  */
-#include "Vertex.hpp"
+#ifndef DETAIL_VERTEX_HPP_
+#define DETAIL_VERTEX_HPP_
 
 
 /**
@@ -187,13 +188,4 @@ VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::e
   return typename Vertex<GraphType, VertexIdType>::Iterator(m_graph, std::make_pair(end, end));
 }
 
-// Explicit instantiation.
-#define INSTANTIATE_VERTEX(GraphType, VertexIdType)\
-template class Vertex<GraphType, VertexIdType>;\
-template class VertexIterator<GraphType, VertexIdType>
-
-INSTANTIATE_VERTEX(UndirectedAdjacencyList, unsigned);
-INSTANTIATE_VERTEX(UndirectedAdjacencyList, size_t);
-
-INSTANTIATE_VERTEX(BidirectionalAdjacencyList, unsigned);
-INSTANTIATE_VERTEX(BidirectionalAdjacencyList, size_t);
+#endif // DETAIL_VERTEX_HPP_

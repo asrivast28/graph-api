@@ -6,8 +6,8 @@
 #define GRAPH_HPP_
 
 #include "Edge.hpp"
-#include "GraphFile.hpp"
 #include "GraphType.hpp"
+#include "GraphFile.hpp"
 #include "Vertex.hpp"
 
 #include <unordered_map>
@@ -68,5 +68,11 @@ private:
   typename GraphType<VertexIdType>::Impl m_graph;
   std::unordered_map<VertexIdType, typename GraphType<VertexIdType>::VertexType> m_idVertexMap;
 }; // class Graph<GraphType, UnsignedType, EnableBoost<GraphType, UnsignedType>>
+
+
+#include "detail/GraphFile.hpp"
+#include "detail/Edge.hpp"
+#include "detail/Vertex.hpp"
+#include "detail/Graph.hpp"
 
 #endif // GRAPH_HPP_

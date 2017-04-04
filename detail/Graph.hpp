@@ -1,8 +1,9 @@
 /**
- * @file Graph.cpp
- * @brief Implementation of Graph functions.
+ * @file Graph.hpp
+ * @brief Details of Graph functions.
  */
-#include "Graph.hpp"
+#ifndef DETAIL_GRAPH_HPP_
+#define DETAIL_GRAPH_HPP_
 
 
 /**
@@ -147,9 +148,4 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::~Graph(
 {
 }
 
-// Explicit instantiation.
-template class Graph<UndirectedAdjacencyList, unsigned>;
-template class Graph<BidirectionalAdjacencyList, unsigned>;
-
-template class Graph<UndirectedAdjacencyList, size_t>;
-template class Graph<BidirectionalAdjacencyList, size_t>;
+#endif // DETAIL_GRAPH_HPP_

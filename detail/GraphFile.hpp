@@ -1,8 +1,9 @@
 /**
- * @file GraphFile.cpp
- * @brief Implementation of GraphFile functions.
+ * @file GraphFile.hpp
+ * @brief Details of GraphFile functions.
  */
-#include "GraphFile.hpp"
+#ifndef DETAIL_GRAPHFILE_HPP_
+#define DETAIL_GRAPHFILE_HPP_
 
 #include <cassert>
 #include <fstream>
@@ -191,12 +192,4 @@ GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>::idSet(
   return m_idSet;
 }
 
-// Explicit instantiation.
-template class GraphFile<GraphFileType::EDGE_LIST, unsigned>;
-template class GraphFile<GraphFileType::EDGE_LIST, size_t>;
-
-template class GraphFile<GraphFileType::INCIDENCE_MATRIX, unsigned>;
-template class GraphFile<GraphFileType::INCIDENCE_MATRIX, size_t>;
-
-template class GraphFile<GraphFileType::ARG_DATABASE, unsigned>;
-template class GraphFile<GraphFileType::ARG_DATABASE, size_t>;
+#endif // DETAIL_GRAPHFILE_HPP_

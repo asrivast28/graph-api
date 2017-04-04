@@ -1,8 +1,9 @@
 /**
- * @file Edge.cpp
- * @brief Implementation of Edge and the corresponding iterator functions.
+ * @file Edge.hpp
+ * @brief Details of Edge and the corresponding iterator functions.
  */
-#include "Edge.hpp"
+#ifndef DETAIL_EDGE_HPP_
+#define DETAIL_EDGE_HPP_
 
 #include "Vertex.hpp"
 
@@ -152,19 +153,4 @@ EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, Verte
   return typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>(m_graph, std::make_pair(end, end));
 }
 
-// Explicit instantiation.
-#define INSTANTIATE_EDGE(GraphType, VertexIdType)\
-template class Edge<GraphType, VertexIdType>;\
-template class Edge<GraphType, VertexIdType>::Iterator<GraphType<VertexIdType>::EdgeIterator>;\
-template class Edge<GraphType, VertexIdType>::Iterator<GraphType<VertexIdType>::InEdgeIterator>;\
-template class Edge<GraphType, VertexIdType>::Iterator<GraphType<VertexIdType>::OutEdgeIterator>;\
-template class EdgeIterator<GraphType, VertexIdType, GraphType<VertexIdType>::EdgeIterator>;\
-template class EdgeIterator<GraphType, VertexIdType, GraphType<VertexIdType>::InEdgeIterator>;\
-template class EdgeIterator<GraphType, VertexIdType, GraphType<VertexIdType>::OutEdgeIterator>
-
-
-INSTANTIATE_EDGE(UndirectedAdjacencyList, unsigned);
-INSTANTIATE_EDGE(UndirectedAdjacencyList, size_t);
-
-INSTANTIATE_EDGE(BidirectionalAdjacencyList, unsigned);
-INSTANTIATE_EDGE(BidirectionalAdjacencyList, size_t);
+#endif // DETAIL_EDGE_HPP_
