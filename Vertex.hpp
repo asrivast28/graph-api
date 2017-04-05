@@ -40,7 +40,7 @@ public:
   class Iterator : public std::iterator<std::forward_iterator_tag, Vertex>
   {
   public:
-    Iterator(const GraphImpl&, const std::pair<IteratorType, IteratorType>&);
+    Iterator(const GraphImpl* const, const std::pair<IteratorType, IteratorType>&);
 
     Iterator&
     operator++();
@@ -55,13 +55,15 @@ public:
     operator*();
 
   private:
-    const GraphImpl& m_graph;
+    const GraphImpl* const m_graph;
     IteratorType m_current;
     const IteratorType m_end;
   }; // class Iterator
 
 public:
-  Vertex(const GraphImpl&, const VertexType&);
+  Vertex();
+
+  Vertex(const GraphImpl* const, const VertexType&);
 
   VertexIdType
   id() const;
@@ -82,8 +84,8 @@ public:
   hasEdgeTo(const Vertex<GraphType, VertexIdType>&) const;
 
 private:
-  const GraphImpl& m_graph;
-  const VertexType m_vertex;
+  const GraphImpl* m_graph;
+  VertexType m_vertex;
 }; // class Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
 
 /**
@@ -104,7 +106,7 @@ private:
   using IteratorType = typename GraphType<VertexIdType>::VertexIterator;
 
 public:
-  VertexIterator(const typename GraphType<VertexIdType>::Impl&);
+  VertexIterator(const typename GraphType<VertexIdType>::Impl* const);
 
   typename Vertex<GraphType, VertexIdType>::Iterator
   begin() const;
@@ -113,7 +115,7 @@ public:
   end() const;
 
 private:
-  const typename GraphType<VertexIdType>::Impl& m_graph;
+  const typename GraphType<VertexIdType>::Impl* const m_graph;
 }; // class VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
 
 #endif // VERTEX_HPP_

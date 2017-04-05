@@ -40,6 +40,10 @@ public:
   VertexIterator<GraphType, VertexIdType>
   vertices() const;
 
+  template <typename Comparator>
+  std::vector<Vertex>
+  sorted(Comparator&&) const;
+
   VertexIdType
   vertexCount() const;
 

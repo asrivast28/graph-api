@@ -67,7 +67,27 @@ VertexIterator<GraphType, VertexIdType>
 Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::vertices(
 ) const
 {
-  return VertexIterator<GraphType, VertexIdType>(m_graph);
+  return VertexIterator<GraphType, VertexIdType>(&m_graph);
+}
+
+/**
+ * @brief  Returns a vector of vertices sorted using the provided comparator.
+ *
+ * @tparam Comparator  Type of the comparator used for sorting.
+ * @param  comp        Comparator function used for sorting.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+template <typename Comparator>
+std::vector<typename Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Vertex>
+Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::sorted(
+  Comparator&& comp
+) const
+{
+  using VertexType = typename GraphType<VertexIdType>::VertexType;
+  std::vector<Vertex> vertices(boost::num_vertices(m_graph));
+  std::transform(boost::vertices(m_graph).first, boost::vertices(m_graph).second, vertices.begin(), [this](const VertexType& u) { return Vertex(&m_graph, u); });
+  std::sort(vertices.begin(), vertices.end(), comp);
+  return vertices;
 }
 
 /**
@@ -112,7 +132,7 @@ EdgeIterator<GraphType, VertexIdType>
 Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::edges(
 ) const
 {
-  return EdgeIterator<GraphType, VertexIdType>(m_graph, boost::edges(m_graph));
+  return EdgeIterator<GraphType, VertexIdType>(&m_graph, boost::edges(m_graph));
 }
 
 /**

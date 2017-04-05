@@ -7,6 +7,16 @@
 
 
 /**
+ * @brief  Default constructor for the vertex wrapper.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Vertex(
+) : m_graph(nullptr),
+    m_vertex(0)
+{
+}
+
+/**
  * @brief  Constructor for the vertex wrapper.
  *
  * @param graph   Instance of the graph implementation.
@@ -14,7 +24,7 @@
  */
 template <template <typename> class GraphType, typename VertexIdType>
 Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Vertex(
-  const GraphImpl& graph,
+  const GraphImpl* const graph,
   const VertexType& vertex
 ) : m_graph(graph),
     m_vertex(vertex)
@@ -29,7 +39,7 @@ VertexIdType
 Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::id(
 ) const
 {
-  return m_graph[m_vertex].id;
+  return (*m_graph)[m_vertex].id;
 }
 
 /**
@@ -40,7 +50,7 @@ VertexIdType
 Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::inDegree(
 ) const
 {
-  return boost::in_degree(m_vertex, m_graph);
+  return boost::in_degree(m_vertex, *m_graph);
 }
 
 /**
@@ -51,7 +61,7 @@ typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType
 Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::inEdges(
 ) const
 {
-  return typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>(m_graph, boost::in_edges(m_vertex, m_graph));
+  return typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>(m_graph, boost::in_edges(m_vertex, *m_graph));
 }
 
 /**
@@ -62,7 +72,7 @@ VertexIdType
 Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::outDegree(
 ) const
 {
-  return boost::out_degree(m_vertex, m_graph);
+  return boost::out_degree(m_vertex, *m_graph);
 }
 
 /**
@@ -73,7 +83,7 @@ typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType
 Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::outEdges(
 ) const
 {
-  return typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>(m_graph, boost::out_edges(m_vertex, m_graph));
+  return typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>(m_graph, boost::out_edges(m_vertex, *m_graph));
 }
 
 /**
@@ -85,7 +95,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::hasEdgeTo
   const Vertex<GraphType, VertexIdType>& other
 ) const
 {
-  return boost::edge(m_vertex, other.m_vertex, m_graph).second;
+  return boost::edge(m_vertex, other.m_vertex, *m_graph).second;
 }
 
 /**
@@ -96,7 +106,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::hasEdgeTo
  */
 template <template <typename> class GraphType, typename VertexIdType>
 Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator::Iterator(
-  const GraphImpl& graph,
+  const GraphImpl* const graph,
   const std::pair<IteratorType, IteratorType>& vertices
 ) : m_graph(graph),
     m_current(vertices.first),
@@ -160,7 +170,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator:
  */
 template <template <typename> class GraphType, typename VertexIdType>
 VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::VertexIterator(
-  const typename GraphType<VertexIdType>::Impl& graph
+  const typename GraphType<VertexIdType>::Impl* const graph
 ) : m_graph(graph)
 {
 }
@@ -173,7 +183,7 @@ typename Vertex<GraphType, VertexIdType>::Iterator
 VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::begin(
 ) const
 {
-  return typename Vertex<GraphType, VertexIdType>::Iterator(m_graph, boost::vertices(m_graph));
+  return typename Vertex<GraphType, VertexIdType>::Iterator(m_graph, boost::vertices(*m_graph));
 }
 
 /**

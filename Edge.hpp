@@ -46,7 +46,7 @@ public:
   class Iterator : public std::iterator<std::forward_iterator_tag, Edge>
   {
   public:
-    Iterator(const GraphImpl&, const std::pair<IteratorType, IteratorType>&);
+    Iterator(const GraphImpl* const, const std::pair<IteratorType, IteratorType>&);
 
     Iterator&
     operator++();
@@ -61,13 +61,13 @@ public:
     operator*();
 
   private:
-    const GraphImpl& m_graph;
+    const GraphImpl* const m_graph;
     IteratorType m_current;
     const IteratorType m_end;
   }; // class Iterator
 
 public:
-  Edge(const GraphImpl&, const EdgeType&);
+  Edge(const GraphImpl* const, const EdgeType&);
 
   Vertex<GraphType, VertexIdType>
   source() const;
@@ -76,8 +76,8 @@ public:
   target() const;
 
 private:
-  const GraphImpl& m_graph;
-  const EdgeType m_edge;
+  const GraphImpl* m_graph;
+  EdgeType m_edge;
 }; // class Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
 
 /**
@@ -96,7 +96,7 @@ class EdgeIterator;
 template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
 class EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, VertexIdType>> {
 public:
-  EdgeIterator(const typename GraphType<VertexIdType>::Impl&, const std::pair<IteratorType, IteratorType>&);
+  EdgeIterator(const typename GraphType<VertexIdType>::Impl* const, const std::pair<IteratorType, IteratorType>&);
 
   typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
   begin() const;
@@ -105,7 +105,7 @@ public:
   end() const;
 
 private:
-  const typename GraphType<VertexIdType>::Impl& m_graph;
+  const typename GraphType<VertexIdType>::Impl* const m_graph;
   const std::pair<IteratorType, IteratorType> m_edges;
 }; // class EdgeIterator<GraphType, VertexIdType, IteratorType, BoostEnable<GraphType, VertexIdType>>
 
