@@ -107,7 +107,7 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::getVertexF
   const VertexIdType& v
 ) const
 {
-  return Vertex(m_graph, m_idVertexMap.at(v));
+  return Vertex(&m_graph, m_idVertexMap.at(v));
 }
 
 /**
