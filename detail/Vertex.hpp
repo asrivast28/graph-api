@@ -194,7 +194,7 @@ typename Vertex<GraphType, VertexIdType>::Iterator
 VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::end(
 ) const
 {
-  IteratorType end = boost::vertices(m_graph).second;
+  IteratorType end = boost::vertices(*m_graph).second;
   return typename Vertex<GraphType, VertexIdType>::Iterator(m_graph, std::make_pair(end, end));
 }
 
