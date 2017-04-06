@@ -27,7 +27,7 @@ class Graph;
  * @brief  Partial specialization of Graph class for Boost graphs.
  */
 template <template <typename> class GraphType, typename UnsignedType>
-class Graph<GraphType, UnsignedType, EnableBoost<GraphType, UnsignedType>> {
+class Graph<GraphType, UnsignedType, EnableBoostAll<GraphType, UnsignedType>> {
 public:
   using VertexIdType = UnsignedType;
 
@@ -65,13 +65,9 @@ public:
   ~Graph();
 
 private:
-  void
-  build(const std::vector<std::pair<VertexIdType, VertexIdType>>&, const std::unordered_set<VertexIdType>&);
-
-private:
   typename GraphType<VertexIdType>::Impl m_graph;
   std::unordered_map<VertexIdType, typename GraphType<VertexIdType>::VertexType> m_idVertexMap;
-}; // class Graph<GraphType, UnsignedType, EnableBoost<GraphType, UnsignedType>>
+}; // class Graph<GraphType, UnsignedType, EnableBoostAll<GraphType, UnsignedType>>
 
 
 #include "detail/GraphFile.hpp"

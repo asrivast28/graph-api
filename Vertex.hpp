@@ -27,7 +27,7 @@ public:
  * @brief  Partial specialization of Vertex class for Boost graphs.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-class Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>> {
+class Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>> {
 private:
   using GraphImpl = typename GraphType<VertexIdType>::Impl;
   using VertexType = typename GraphType<VertexIdType>::VertexType;
@@ -52,7 +52,7 @@ public:
     operator!=(const Iterator&) const;
 
     Vertex
-    operator*();
+    operator*() const;
 
   private:
     const GraphImpl* const m_graph;
@@ -86,7 +86,7 @@ public:
 private:
   const GraphImpl* m_graph;
   VertexType m_vertex;
-}; // class Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
+}; // class Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>
 
 /**
  * @brief  Class that provides an iterator over vertices of the graph.
@@ -101,7 +101,7 @@ class VertexIterator;
  * @brief  Partial specialization of VertexIterator class for Boost graphs.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-class VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>> {
+class VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>> {
 private:
   using IteratorType = typename GraphType<VertexIdType>::VertexIterator;
 
@@ -116,6 +116,6 @@ public:
 
 private:
   const typename GraphType<VertexIdType>::Impl* const m_graph;
-}; // class VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
+}; // class VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>
 
 #endif // VERTEX_HPP_

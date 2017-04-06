@@ -10,7 +10,7 @@
  * @brief  Default constructor for the vertex wrapper.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Vertex(
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Vertex(
 ) : m_graph(nullptr),
     m_vertex(0)
 {
@@ -23,7 +23,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Vertex(
  * @param vertex  Instance of the vertex implementation.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Vertex(
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Vertex(
   const GraphImpl* const graph,
   const VertexType& vertex
 ) : m_graph(graph),
@@ -36,7 +36,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Vertex(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 VertexIdType
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::id(
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::id(
 ) const
 {
   return (*m_graph)[m_vertex].id;
@@ -47,7 +47,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::id(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 VertexIdType
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::inDegree(
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::inDegree(
 ) const
 {
   return boost::in_degree(m_vertex, *m_graph);
@@ -58,7 +58,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::inDegree(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::inEdges(
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::inEdges(
 ) const
 {
   return typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>(m_graph, boost::in_edges(m_vertex, *m_graph));
@@ -69,7 +69,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::inEdges(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 VertexIdType
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::outDegree(
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::outDegree(
 ) const
 {
   return boost::out_degree(m_vertex, *m_graph);
@@ -80,7 +80,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::outDegree
  */
 template <template <typename> class GraphType, typename VertexIdType>
 typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::outEdges(
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::outEdges(
 ) const
 {
   return typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>(m_graph, boost::out_edges(m_vertex, *m_graph));
@@ -91,7 +91,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::outEdges(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 bool
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::hasEdgeTo(
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::hasEdgeTo(
   const Vertex<GraphType, VertexIdType>& other
 ) const
 {
@@ -105,7 +105,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::hasEdgeTo
  * @param vertices  Pair of begin and end iterator implementations over the vertices.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator::Iterator(
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator::Iterator(
   const GraphImpl* const graph,
   const std::pair<IteratorType, IteratorType>& vertices
 ) : m_graph(graph),
@@ -118,8 +118,8 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator:
  * @brief  Increments the iterator.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-typename Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator&
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator::operator++(
+typename Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator&
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator::operator++(
 )
 {
   if (m_current != m_end) {
@@ -133,8 +133,8 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator:
  */
 template <template <typename> class GraphType, typename VertexIdType>
 bool
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator::operator==(
-  const Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator& that
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator::operator==(
+  const Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator& that
 ) const
 {
   return (m_current == that.m_current);
@@ -145,8 +145,8 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator:
  */
 template <template <typename> class GraphType, typename VertexIdType>
 bool
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator::operator!=(
-  const Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator& that
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator::operator!=(
+  const Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator& that
 ) const
 {
   return (m_current != that.m_current);
@@ -156,9 +156,9 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator:
  * @brief  Returns the vertex that the iterator is currently pointing to.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-typename ::Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
-Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator::operator*(
-)
+typename ::Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator::operator*(
+) const
 {
   return Vertex<GraphType, VertexIdType>(m_graph, *m_current);
 }
@@ -169,7 +169,7 @@ Vertex<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator:
  * @param graph  Instance of the graph implementation.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::VertexIterator(
+VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::VertexIterator(
   const typename GraphType<VertexIdType>::Impl* const graph
 ) : m_graph(graph)
 {
@@ -180,7 +180,7 @@ VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::V
  */
 template <template <typename> class GraphType, typename VertexIdType>
 typename Vertex<GraphType, VertexIdType>::Iterator
-VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::begin(
+VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::begin(
 ) const
 {
   return typename Vertex<GraphType, VertexIdType>::Iterator(m_graph, boost::vertices(*m_graph));
@@ -191,7 +191,7 @@ VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::b
  */
 template <template <typename> class GraphType, typename VertexIdType>
 typename Vertex<GraphType, VertexIdType>::Iterator
-VertexIterator<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::end(
+VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::end(
 ) const
 {
   IteratorType end = boost::vertices(*m_graph).second;

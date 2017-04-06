@@ -5,6 +5,7 @@
 #ifndef GRAPHTYPE_HPP_
 #define GRAPHTYPE_HPP_
 
+#include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
 
@@ -40,18 +41,6 @@ struct VertexInfo {
 };
 
 /**
- * @brief  Typedef for Boost undirected graph using VertexInfo as vertex bundled properties.
- */
-template <typename UnsignedType>
-using UndirectedGraph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, VertexInfo<UnsignedType>>;
-
-/**
- * @brief  Typedef for Boost bidirectional graph using VertexInfo as vertex bundled properties.
- */
-template <typename UnsignedType>
-using BidirectionalGraph = boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS, VertexInfo<UnsignedType>>;
-
-/**
  * @brief  Graph type for Boost graphs.
  *
  * @tparam BoostGraph    Type of Boost graph implementation.
@@ -71,21 +60,49 @@ struct GraphType<BoostGraph, UnsignedType, typename std::enable_if<std::is_same<
 };
 
 /**
- * @brief  Boost undirected graph type using VertexInfo as vertex bundled properties.
+ * @brief  Boost undirected adjacency list using VertexInfo as vertex bundled properties.
  */
 template <typename UnsignedType>
-using UndirectedAdjacencyList = GraphType<UndirectedGraph<UnsignedType>, UnsignedType>;
+using UndirectedAdjacencyList = GraphType<boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, VertexInfo<UnsignedType>>, UnsignedType>;
 
 /**
- * @brief  Boost bidirectional graph type using VertexInfo as vertex bundled properties.
+ * @brief  Boost bidirectional adjacency list using VertexInfo as vertex bundled properties.
  */
 template <typename UnsignedType>
-using BidirectionalAdjacencyList = GraphType<BidirectionalGraph<UnsignedType>, UnsignedType>;
+using BidirectionalAdjacencyList = GraphType<boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS, VertexInfo<UnsignedType>>, UnsignedType>;
 
 /**
- * @brief  Used for enabling a template only for boost graph types.
+ * @brief  Boost directed adjacency list using VertexInfo as vertex bundled properties.
  */
-template <template <typename> class GraphType, typename VertexIdType>
-using EnableBoost = typename std::enable_if<std::is_same<decltype(boost::graph_traits<typename GraphType<VertexIdType>::Impl>::null_vertex()), typename GraphType<VertexIdType>::VertexType>::value>::type;
+template <typename UnsignedType>
+using DirectedAdjacencyList = GraphType<boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS, VertexInfo<UnsignedType>>, UnsignedType>;
+
+/**
+ * @brief  Boost bidirectional CSR graph using VertexInfo as vertex bundled properties.
+ */
+template <typename UnsignedType>
+using DirectedCSRGraph = GraphType<boost::compressed_sparse_row_graph<boost::directedS, VertexInfo<UnsignedType>, boost::no_property, boost::no_property, UnsignedType, size_t>, UnsignedType>;
+
+/**
+ * @brief  Used for enabling a template only for boost adjacency list graph type.
+ */
+template <template <typename> class GraphType, typename VertexIdType, typename ReturnType = void>
+using EnableBoostAdjacencyList = typename std::enable_if<std::is_same<GraphType<VertexIdType>, UndirectedAdjacencyList<VertexIdType>>::value |
+                                                         std::is_same<GraphType<VertexIdType>, BidirectionalAdjacencyList<VertexIdType>>::value |
+                                                         std::is_same<GraphType<VertexIdType>, DirectedAdjacencyList<VertexIdType>>::value,
+                                                         ReturnType
+                                                        >::type;
+
+/**
+ * @brief  Used for enabling a template only for boost CSR graph type.
+ */
+template <template <typename> class GraphType, typename VertexIdType, typename ReturnType = void>
+using EnableBoostCSR = typename std::enable_if<std::is_same<GraphType<VertexIdType>, DirectedCSRGraph<VertexIdType>>::value, ReturnType>::type;
+
+/**
+ * @brief  Used for enabling a template for all boost graph types.
+ */
+template <template <typename> class GraphType, typename VertexIdType, typename ReturnType = void>
+using EnableBoostAll = typename std::enable_if<std::is_same<decltype(boost::graph_traits<typename GraphType<VertexIdType>::Impl>::null_vertex()), typename GraphType<VertexIdType>::VertexType>::value, ReturnType>::type;
 
 #endif // GRAPHTYPE_HPP_

@@ -15,7 +15,7 @@
  * @param edge   Instance of the edge implementation.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Edge(
+Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Edge(
   const GraphImpl* const graph,
   const EdgeType& edge
 ) : m_graph(graph),
@@ -28,7 +28,7 @@ Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Edge(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 typename ::Vertex<GraphType, VertexIdType>
-Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::source(
+Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::source(
 ) const
 {
   return typename ::Vertex<GraphType, VertexIdType>(m_graph, boost::source(m_edge, *m_graph));
@@ -39,7 +39,7 @@ Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::source(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 typename ::Vertex<GraphType, VertexIdType>
-Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::target(
+Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::target(
 ) const
 {
   return typename ::Vertex<GraphType, VertexIdType>(m_graph, boost::target(m_edge, *m_graph));
@@ -53,7 +53,7 @@ Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::target(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
-Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>::Iterator(
+Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator<IteratorType>::Iterator(
   const GraphImpl* const graph,
   const std::pair<IteratorType, IteratorType>& edges
 ) : m_graph(graph),
@@ -67,8 +67,8 @@ Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<It
  */
 template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
-typename Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::template Iterator<IteratorType>&
-Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>::operator++(
+typename Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::template Iterator<IteratorType>&
+Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator<IteratorType>::operator++(
 )
 {
   if (m_current != m_end) {
@@ -83,8 +83,8 @@ Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<It
 template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
 bool
-Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>::operator==(
-  const Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>& that
+Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator<IteratorType>::operator==(
+  const Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator<IteratorType>& that
 ) const
 {
   return (m_current == that.m_current);
@@ -96,8 +96,8 @@ Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<It
 template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
 bool
-Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>::operator!=(
-  const Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>& that
+Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator<IteratorType>::operator!=(
+  const Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator<IteratorType>& that
 ) const
 {
   return (m_current != that.m_current);
@@ -108,9 +108,9 @@ Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<It
  */
 template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
-typename ::Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
-Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<IteratorType>::operator*(
-)
+typename ::Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>
+Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator<IteratorType>::operator*(
+) const
 {
   return Edge<GraphType, VertexIdType>(m_graph, *m_current);
 }
@@ -122,7 +122,7 @@ Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Iterator<It
  * @param edges  Pair of begin and end iterator implementations over the edges.
  */
 template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
-EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, VertexIdType>>::EdgeIterator(
+EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>>::EdgeIterator(
   const typename GraphType<VertexIdType>::Impl* const graph,
   const std::pair<IteratorType, IteratorType>& edges
 ) : m_graph(graph),
@@ -135,7 +135,7 @@ EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, Verte
  */
 template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
 typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
-EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, VertexIdType>>::begin(
+EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>>::begin(
 ) const
 {
   return typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>(m_graph, m_edges);
@@ -146,7 +146,7 @@ EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, Verte
  */
 template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
 typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
-EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, VertexIdType>>::end(
+EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>>::end(
 ) const
 {
   IteratorType end = m_edges.second;

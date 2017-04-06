@@ -31,7 +31,7 @@ public:
  * @brief  Partial specialization of Edge class for Boost graphs.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-class Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>> {
+class Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>> {
 private:
   using GraphImpl = typename GraphType<VertexIdType>::Impl;
   using EdgeType = typename GraphType<VertexIdType>::EdgeType;
@@ -58,13 +58,18 @@ public:
     operator!=(const Iterator&) const;
 
     Edge
-    operator*();
+    operator*() const;
 
   private:
     const GraphImpl* const m_graph;
     IteratorType m_current;
     const IteratorType m_end;
   }; // class Iterator
+
+public:
+  using EdgeIterator = Iterator<typename GraphType<VertexIdType>::EdgeIterator>;
+  using OutEdgeIterator = Iterator<typename GraphType<VertexIdType>::OutEdgeIterator>;
+  using InEdgeIterator = Iterator<typename GraphType<VertexIdType>::OutEdgeIterator>;
 
 public:
   Edge(const GraphImpl* const, const EdgeType&);
@@ -78,7 +83,7 @@ public:
 private:
   const GraphImpl* m_graph;
   EdgeType m_edge;
-}; // class Edge<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>
+}; // class Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>
 
 /**
  * @brief  Class that provides an iterator over edges of the graph.
@@ -94,7 +99,7 @@ class EdgeIterator;
  * @brief  Partial specialization of EdgeIterator class for Boost graphs.
  */
 template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
-class EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoost<GraphType, VertexIdType>> {
+class EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>> {
 public:
   EdgeIterator(const typename GraphType<VertexIdType>::Impl* const, const std::pair<IteratorType, IteratorType>&);
 

@@ -5,31 +5,72 @@
 #ifndef DETAIL_GRAPH_HPP_
 #define DETAIL_GRAPH_HPP_
 
+#include <boost/graph/vf2_sub_graph_iso.hpp>
+#include <boost/iterator/transform_iterator.hpp>
+
 
 /**
- * @brief  Function that builds an in-memory graph from the given edge list.
+ * @brief  Function that constructs a boost adjacency list graph from the given edge list.
  *
- * @param edgeList  List of all the edges in the graph to be built.
- * @param idSet     Set of all the vertex ids in the graph.
+ * @param edgeList     List of all the edges in the graph to be built.
+ * @param idSet        Set of all the vertex ids in the graph.
+ * @param graph        Graph constructed by the function.
+ * @param idVertexMap  Map from the file vertex ids to the corresponding in-memory vertex.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-void
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::build(
+EnableBoostAdjacencyList<GraphType, VertexIdType>
+construct(
   const std::vector<std::pair<VertexIdType, VertexIdType>>& edgeList,
-  const std::unordered_set<VertexIdType>& idSet
+  const std::unordered_set<VertexIdType>& idSet,
+  typename GraphType<VertexIdType>::Impl& graph,
+  std::unordered_map<VertexIdType, typename GraphType<VertexIdType>::VertexType>& idVertexMap
 )
 {
-  m_graph = typename GraphType<VertexIdType>::Impl(idSet.size());
-  typename GraphType<VertexIdType>::VertexIterator v = boost::vertices(m_graph).first;
+  graph = typename GraphType<VertexIdType>::Impl(idSet.size());
+  typename GraphType<VertexIdType>::VertexIterator v = boost::vertices(graph).first;
   for (const VertexIdType& id : idSet) {
-    m_graph[*v].id = id;
-    m_idVertexMap.insert(std::make_pair(id, *v));
+    graph[*v].id = id;
+    idVertexMap.insert(std::make_pair(id, *v));
     ++v;
   }
-
-  for (const std::pair<VertexIdType, VertexIdType>& edge : edgeList) {
-    boost::add_edge(m_idVertexMap.at(edge.first), m_idVertexMap.at(edge.second), m_graph);
+  auto getVertexTypePair = [&idVertexMap](const std::pair<VertexIdType, VertexIdType>& e) { return std::make_pair(idVertexMap.at(e.first), idVertexMap.at(e.second)); };
+  auto edgeBegin = boost::make_transform_iterator(edgeList.begin(), getVertexTypePair);
+  auto edgeEnd = boost::make_transform_iterator(edgeList.end(), getVertexTypePair);
+  using VertexType = typename GraphType<VertexIdType>::VertexType;
+  for (const std::pair<VertexType, VertexType>& edge : boost::make_iterator_range(edgeBegin, edgeEnd)) {
+    boost::add_edge(edge.first, edge.second, graph);
   }
+}
+
+/**
+ * @brief  Function that constructs a boost adjacency compressed sparse row graph from the given edge list.
+ *
+ * @param edgeList     List of all the edges in the graph to be built.
+ * @param idSet        Set of all the vertex ids in the graph.
+ * @param graph        Graph constructed by the function.
+ * @param idVertexMap  Map from the file vertex ids to the corresponding in-memory vertex.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+EnableBoostCSR<GraphType, VertexIdType>
+construct(
+  const std::vector<std::pair<VertexIdType, VertexIdType>>& edgeList,
+  const std::unordered_set<VertexIdType>& idSet,
+  typename GraphType<VertexIdType>::Impl& graph,
+  std::unordered_map<VertexIdType, typename GraphType<VertexIdType>::VertexType>& idVertexMap
+)
+{
+  std::vector<std::pair<VertexIdType, VertexIdType>> emptyEdges;
+  graph = typename GraphType<VertexIdType>::Impl(boost::edges_are_unsorted, emptyEdges.begin(), emptyEdges.end(), idSet.size());
+  typename GraphType<VertexIdType>::VertexIterator v = boost::vertices(graph).first;
+  for (const VertexIdType& id : idSet) {
+    graph[*v].id = id;
+    idVertexMap.insert(std::make_pair(id, *v));
+    ++v;
+  }
+  auto getVertexTypePair = [&idVertexMap](const std::pair<VertexIdType, VertexIdType>& e) { return std::make_pair(idVertexMap.at(e.first), idVertexMap.at(e.second)); };
+  auto edgeBegin = boost::make_transform_iterator(edgeList.begin(), getVertexTypePair);
+  auto edgeEnd = boost::make_transform_iterator(edgeList.end(), getVertexTypePair);
+  boost::add_edges(edgeBegin, edgeEnd, graph);
 }
 
 /**
@@ -39,7 +80,7 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::build(
  * @param fileType  Type of the file from which graph is to be read.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Graph(
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Graph(
   const std::string& fileName,
   const enum GraphFileType fileType
 ) : m_graph(),
@@ -47,15 +88,15 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Graph(
 {
   if (fileType == GraphFileType::EDGE_LIST) {
     GraphFile<GraphFileType::EDGE_LIST, VertexIdType> graphFile(fileName);
-    build(graphFile.edgeList(), graphFile.idSet());
+    construct<GraphType, VertexIdType>(graphFile.edgeList(), graphFile.idSet(), m_graph, m_idVertexMap);
   }
   else if (fileType == GraphFileType::INCIDENCE_MATRIX) {
     GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType> graphFile(fileName);
-    build(graphFile.edgeList(), graphFile.idSet());
+    construct<GraphType, VertexIdType>(graphFile.edgeList(), graphFile.idSet(), m_graph, m_idVertexMap);
   }
   else if (fileType == GraphFileType::ARG_DATABASE) {
     GraphFile<GraphFileType::ARG_DATABASE, VertexIdType> graphFile(fileName);
-    build(graphFile.edgeList(), graphFile.idSet());
+    construct<GraphType, VertexIdType>(graphFile.edgeList(), graphFile.idSet(), m_graph, m_idVertexMap);
   }
 }
 
@@ -64,7 +105,7 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Graph(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 VertexIterator<GraphType, VertexIdType>
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::vertices(
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::vertices(
 ) const
 {
   return VertexIterator<GraphType, VertexIdType>(&m_graph);
@@ -78,8 +119,8 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::vertices(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 template <typename Comparator>
-std::vector<typename Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Vertex>
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::sorted(
+std::vector<typename Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Vertex>
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::sorted(
   Comparator&& comp
 ) const
 {
@@ -95,15 +136,15 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::sorted(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 VertexIdType
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::vertexCount(
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::vertexCount(
 ) const
 {
   return static_cast<VertexIdType>(boost::num_vertices(m_graph));
 }
 
 template <template <typename> class GraphType, typename VertexIdType>
-typename Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::Vertex
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::getVertexFromId(
+typename Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Vertex
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::getVertexFromId(
   const VertexIdType& v
 ) const
 {
@@ -115,7 +156,7 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::getVertexF
  */
 template <template <typename> class GraphType, typename VertexIdType>
 VertexIdType
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::maxVertexId(
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::maxVertexId(
 ) const
 {
   using MapPairType = std::pair<VertexIdType, typename GraphType<VertexIdType>::VertexType>;
@@ -129,7 +170,7 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::maxVertexI
  */
 template <template <typename> class GraphType, typename VertexIdType>
 EdgeIterator<GraphType, VertexIdType>
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::edges(
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::edges(
 ) const
 {
   return EdgeIterator<GraphType, VertexIdType>(&m_graph, boost::edges(m_graph));
@@ -140,7 +181,7 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::edges(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 size_t
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::edgeCount(
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::edgeCount(
 ) const
 {
   return static_cast<size_t>(boost::num_edges(m_graph));
@@ -151,7 +192,7 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::edgeCount(
  */
 template <template <typename> class GraphType, typename VertexIdType>
 bool
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::edgeExists(
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::edgeExists(
   const Vertex& u,
   const Vertex& v
 ) const
@@ -163,7 +204,7 @@ Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::edgeExists
  * @brief  Default destructor.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-Graph<GraphType, VertexIdType, EnableBoost<GraphType, VertexIdType>>::~Graph(
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::~Graph(
 )
 {
 }
