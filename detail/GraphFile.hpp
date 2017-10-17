@@ -155,4 +155,40 @@ GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>::GraphFile(
 IMPL_GRAPH_FILE(GraphFileType::ARG_DATABASE)
 
 
+/**
+ * @brief  Constructor that reads edge list from the given file.
+ *
+ * @param fileName  Name of the file from which graph is to be read.
+ * @param edgeList  List of all the edges read from the file.
+ * @param idSet     Set of all the ids read from the file.
+ */
+template <typename VertexIdType>
+GraphFile<GraphFileType::FHCP, VertexIdType>::GraphFile(
+  const std::string& fileName
+) : m_edgeList(),
+    m_idSet()
+{
+  std::ifstream graphFile(fileName);
+  std::string line;
+  while (std::getline(graphFile, line)) {
+    if (line.compare("EDGE_DATA_SECTION") == 0) {
+      break;
+    }
+  }
+  while (std::getline(graphFile, line)) {
+    if (line.compare("-1") == 0) {
+      break;
+    }
+    std::istringstream is(line);
+    VertexIdType u, v;
+    is >> u >> v;
+    m_edgeList.push_back(std::make_pair(u, v));
+    m_idSet.insert(u);
+    m_idSet.insert(v);
+  }
+}
+
+IMPL_GRAPH_FILE(GraphFileType::FHCP)
+
+
 #endif // DETAIL_GRAPHFILE_HPP_

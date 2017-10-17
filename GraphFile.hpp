@@ -15,7 +15,8 @@
 enum class GraphFileType {
   EDGE_LIST,
   INCIDENCE_MATRIX,
-  ARG_DATABASE
+  ARG_DATABASE,
+  FHCP
 };
 
 /**
@@ -59,9 +60,9 @@ DECL_GRAPH_FILE(GraphFileType::INCIDENCE_MATRIX);
  */
 DECL_GRAPH_FILE(GraphFileType::ARG_DATABASE);
 
-private:
-  std::vector<std::pair<VertexIdType, VertexIdType>> m_edgeList;
-  std::unordered_set<VertexIdType> m_idSet;
-}; // class GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>
+/**
+ * @brief  Partial specialization of GraphFile class for FileType = GraphFileType::FHCP.
+ */
+DECL_GRAPH_FILE(GraphFileType::FHCP);
 
 #endif // GRAPHFILE_HPP_
