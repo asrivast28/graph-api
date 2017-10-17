@@ -98,6 +98,9 @@ Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Graph(
     GraphFile<GraphFileType::ARG_DATABASE, VertexIdType> graphFile(fileName);
     construct<GraphType, VertexIdType>(graphFile.edgeList(), graphFile.idSet(), m_graph, m_idVertexMap);
   }
+  else {
+    throw std::runtime_error("Graph file type not found!");
+  }
 }
 
 /**

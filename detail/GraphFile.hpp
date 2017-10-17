@@ -10,6 +10,30 @@
 #include <regex>
 #include <sstream>
 
+#define IMPL_GRAPH_FILE(FileType)\
+/**\
+ * @brief  Returns the list of all the edges read from the file.\
+ */\
+template <typename VertexIdType>\
+const std::vector<std::pair<VertexIdType, VertexIdType>>&\
+GraphFile<FileType, VertexIdType>::edgeList(\
+) const\
+{\
+  assert(m_edgeList.size() > 0);\
+  return m_edgeList;\
+}\
+\
+/**\
+ * @brief  Returns the set of all the vertex ids read from the file.\
+G */\
+template <typename VertexIdType>\
+const std::unordered_set<VertexIdType>&\
+GraphFile<FileType, VertexIdType>::idSet(\
+) const\
+{\
+  return m_idSet;\
+}
+
 
 /**
  * @brief  Constructor that reads edge list from the given file.
@@ -39,28 +63,7 @@ GraphFile<GraphFileType::EDGE_LIST, VertexIdType>::GraphFile(
   }
 }
 
-/**
- * @brief  Returns the list of all the edges read from the file.
- */
-template <typename VertexIdType>
-const std::vector<std::pair<VertexIdType, VertexIdType>>&
-GraphFile<GraphFileType::EDGE_LIST, VertexIdType>::edgeList(
-) const
-{
-  assert(m_edgeList.size() > 0);
-  return m_edgeList;
-}
-
-/**
- * @brief  Returns the set of all the vertex ids read from the file.
- */
-template <typename VertexIdType>
-const std::unordered_set<VertexIdType>&
-GraphFile<GraphFileType::EDGE_LIST, VertexIdType>::idSet(
-) const
-{
-  return m_idSet;
-}
+IMPL_GRAPH_FILE(GraphFileType::EDGE_LIST)
 
 /**
  * @brief  Constructor that reads edge list from the given file.
@@ -104,28 +107,8 @@ GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::GraphFile(
   }
 }
 
-/**
- * @brief  Returns the list of all the edges read from the file.
- */
-template <typename VertexIdType>
-const std::vector<std::pair<VertexIdType, VertexIdType>>&
-GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::edgeList(
-) const
-{
-  assert(m_edgeList.size() > 0);
-  return m_edgeList;
-}
+IMPL_GRAPH_FILE(GraphFileType::INCIDENCE_MATRIX)
 
-/**
- * @brief  Returns the set of all the vertex ids read from the file.
- */
-template <typename VertexIdType>
-const std::unordered_set<VertexIdType>&
-GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::idSet(
-) const
-{
-  return m_idSet;
-}
 
 template <unsigned WordSize, typename TargetType>
 TargetType
@@ -169,17 +152,8 @@ GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>::GraphFile(
   }
 }
 
-/**
- * @brief  Returns the list of all the edges read from the file.
- */
-template <typename VertexIdType>
-const std::vector<std::pair<VertexIdType, VertexIdType>>&
-GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>::edgeList(
-) const
-{
-  assert(m_edgeList.size() > 0);
-  return m_edgeList;
-}
+IMPL_GRAPH_FILE(GraphFileType::ARG_DATABASE)
+
 
 /**
  * @brief  Returns the set of all the vertex ids read from the file.
