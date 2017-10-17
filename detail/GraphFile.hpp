@@ -155,15 +155,4 @@ GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>::GraphFile(
 IMPL_GRAPH_FILE(GraphFileType::ARG_DATABASE)
 
 
-/**
- * @brief  Returns the set of all the vertex ids read from the file.
- */
-template <typename VertexIdType>
-const std::unordered_set<VertexIdType>&
-GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>::idSet(
-) const
-{
-  return m_idSet;
-}
-
 #endif // DETAIL_GRAPHFILE_HPP_
