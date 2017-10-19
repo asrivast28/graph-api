@@ -37,6 +37,9 @@ public:
 public:
   Graph(const std::string&, const enum GraphFileType);
 
+  bool
+  isDirected() const;
+
   VertexIterator<GraphType, VertexIdType>
   vertices() const;
 

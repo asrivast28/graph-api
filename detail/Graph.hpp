@@ -5,6 +5,7 @@
 #ifndef DETAIL_GRAPH_HPP_
 #define DETAIL_GRAPH_HPP_
 
+#include <boost/graph/graph_traits.hpp>
 #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -105,6 +106,17 @@ Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Graph(
   else {
     throw std::runtime_error("Graph file type not found!");
   }
+}
+
+/**
+ * @brief  Checks if the graph is directed.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+bool
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::isDirected(
+) const
+{
+  return boost::is_directed(m_graph);
 }
 
 /**
