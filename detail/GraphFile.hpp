@@ -171,12 +171,12 @@ GraphFile<GraphFileType::FHCP, VertexIdType>::GraphFile(
   std::ifstream graphFile(fileName);
   std::string line;
   while (std::getline(graphFile, line)) {
-    if (line.compare("EDGE_DATA_SECTION") == 0) {
+    if (line.find("EDGE_DATA_SECTION") != std::string::npos) {
       break;
     }
   }
   while (std::getline(graphFile, line)) {
-    if (line.compare("-1") == 0) {
+    if (line.find("-1") != std::string::npos) {
       break;
     }
     std::istringstream is(line);
