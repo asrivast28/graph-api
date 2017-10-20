@@ -151,6 +151,25 @@ Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::sorted(
 }
 
 /**
+ * @brief  Returns the minimum vertex using the provided comparator.
+ *
+ * @tparam Comparator  Type of the comparator used for comparison.
+ * @param  comp        Comparator function.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+template <typename Comparator>
+typename Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Vertex
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::minElement(
+  Comparator&& comp
+) const
+{
+  using VertexType = typename GraphType<VertexIdType>::VertexType;
+  std::vector<Vertex> vertices(boost::num_vertices(m_graph));
+  std::transform(boost::vertices(m_graph).first, boost::vertices(m_graph).second, vertices.begin(), [this](const VertexType& u) { return Vertex(&m_graph, u); });
+  return *(std::min_element(vertices.begin(), vertices.end(), comp));
+}
+
+/**
  * @brief  Returns the number of vertices in the graph.
  */
 template <template <typename> class GraphType, typename VertexIdType>

@@ -47,6 +47,10 @@ public:
   std::vector<Vertex>
   sorted(Comparator&&) const;
 
+  template <typename Comparator>
+  Vertex
+  minElement(Comparator&&) const;
+
   VertexIdType
   vertexCount() const;
 
