@@ -49,7 +49,7 @@ public:
 
   template <typename Comparator>
   Vertex
-  minElement(Comparator&&) const;
+  minVertex(Comparator&&) const;
 
   VertexIdType
   vertexCount() const;

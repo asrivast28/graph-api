@@ -159,7 +159,7 @@ Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::sorted(
 template <template <typename> class GraphType, typename VertexIdType>
 template <typename Comparator>
 typename Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Vertex
-Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::minElement(
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::minVertex(
   Comparator&& comp
 ) const
 {
