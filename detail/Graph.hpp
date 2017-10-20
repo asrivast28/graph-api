@@ -171,6 +171,20 @@ Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::getVert
 }
 
 /**
+ * @brief  Returns the minimum id of the vertices in the graph.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+VertexIdType
+Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::minVertexId(
+) const
+{
+  using MapPairType = std::pair<VertexIdType, typename GraphType<VertexIdType>::VertexType>;
+  return std::min_element(m_idVertexMap.begin(), m_idVertexMap.end(),
+                          [](const MapPairType& a, const MapPairType& b) { return a.first < b.first; }
+                         )->first;
+}
+
+/**
  * @brief  Returns the maximum id of the vertices in the graph.
  */
 template <template <typename> class GraphType, typename VertexIdType>

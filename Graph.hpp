@@ -54,6 +54,9 @@ public:
   getVertexFromId(const VertexIdType&) const;
 
   VertexIdType
+  minVertexId() const;
+
+  VertexIdType
   maxVertexId() const;
 
   EdgeIterator<GraphType, VertexIdType>
