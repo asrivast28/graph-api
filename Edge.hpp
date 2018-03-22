@@ -69,7 +69,7 @@ public:
 public:
   using EdgeIterator = Iterator<typename GraphType<VertexIdType>::EdgeIterator>;
   using OutEdgeIterator = Iterator<typename GraphType<VertexIdType>::OutEdgeIterator>;
-  using InEdgeIterator = Iterator<typename GraphType<VertexIdType>::OutEdgeIterator>;
+  using InEdgeIterator = Iterator<typename GraphType<VertexIdType>::InEdgeIterator>;
 
 public:
   Edge(const GraphImpl* const, const EdgeType&);
