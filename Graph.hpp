@@ -40,7 +40,7 @@ public:
   bool
   isDirected() const;
 
-  VertexIterator<GraphType, VertexIdType>
+  VertexIteratorProvider<GraphType, VertexIdType>
   vertices() const;
 
   template <typename Comparator>
@@ -63,7 +63,7 @@ public:
   VertexIdType
   maxVertexId() const;
 
-  EdgeIterator<GraphType, VertexIdType>
+  EdgeIteratorProvider<GraphType, VertexIdType>
   edges() const;
 
   size_t

@@ -93,15 +93,15 @@ private:
  * @tparam IteratorType  Type of the edge iterator.
  */
 template <template <typename> class GraphType, typename VertexIdType, typename IteratorType = typename GraphType<VertexIdType>::EdgeIterator, typename Enable = void>
-class EdgeIterator;
+class EdgeIteratorProvider;
 
 /**
- * @brief  Partial specialization of EdgeIterator class for Boost graphs.
+ * @brief  Partial specialization of EdgeIteratorProvider class for Boost graphs.
  */
 template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
-class EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>> {
+class EdgeIteratorProvider<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>> {
 public:
-  EdgeIterator(const typename GraphType<VertexIdType>::Impl* const, const std::pair<IteratorType, IteratorType>&);
+  EdgeIteratorProvider(const typename GraphType<VertexIdType>::Impl* const, const std::pair<IteratorType, IteratorType>&);
 
   typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
   begin() const;
@@ -112,6 +112,6 @@ public:
 private:
   const typename GraphType<VertexIdType>::Impl* const m_graph;
   const std::pair<IteratorType, IteratorType> m_edges;
-}; // class EdgeIterator<GraphType, VertexIdType, IteratorType, BoostEnable<GraphType, VertexIdType>>
+}; // class EdgeIteratorProvider<GraphType, VertexIdType, IteratorType, BoostEnable<GraphType, VertexIdType>>
 
 #endif // EDGE_HPP_

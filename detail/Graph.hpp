@@ -120,14 +120,14 @@ Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::isDirec
 }
 
 /**
- * @brief  Returns an iterator for all the vertices in the graph.
+ * @brief  Returns an iterator provider for all the vertices in the graph.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-VertexIterator<GraphType, VertexIdType>
+VertexIteratorProvider<GraphType, VertexIdType>
 Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::vertices(
 ) const
 {
-  return VertexIterator<GraphType, VertexIdType>(&m_graph);
+  return VertexIteratorProvider<GraphType, VertexIdType>(&m_graph);
 }
 
 /**
@@ -218,14 +218,14 @@ Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::maxVert
 }
 
 /**
- * @brief  Returns an iterator for all the edges in the graph.
+ * @brief  Returns an iterator provider for all the edges in the graph.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-EdgeIterator<GraphType, VertexIdType>
+EdgeIteratorProvider<GraphType, VertexIdType>
 Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::edges(
 ) const
 {
-  return EdgeIterator<GraphType, VertexIdType>(&m_graph, boost::edges(m_graph));
+  return EdgeIteratorProvider<GraphType, VertexIdType>(&m_graph, boost::edges(m_graph));
 }
 
 /**

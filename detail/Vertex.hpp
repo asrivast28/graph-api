@@ -54,14 +54,14 @@ Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::inDegr
 }
 
 /**
- * @brief  Returns an iterator over the edges incident on this vertex.
+ * @brief  Returns an iterator provider over the edges incident on this vertex.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>
+EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>
 Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::inEdges(
 ) const
 {
-  return typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>(m_graph, boost::in_edges(m_vertex, *m_graph));
+  return EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>(m_graph, boost::in_edges(m_vertex, *m_graph));
 }
 
 /**
@@ -76,14 +76,14 @@ Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::outDeg
 }
 
 /**
- * @brief  Returns an iterator over the outgoing edges from this vertex.
+ * @brief  Returns an iterator provider over the outgoing edges from this vertex.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>
+EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>
 Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::outEdges(
 ) const
 {
-  return typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>(m_graph, boost::out_edges(m_vertex, *m_graph));
+  return EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>(m_graph, boost::out_edges(m_vertex, *m_graph));
 }
 
 /**
@@ -169,7 +169,7 @@ Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterat
  * @param graph  Instance of the graph implementation.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::VertexIterator(
+VertexIteratorProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::VertexIteratorProvider(
   const typename GraphType<VertexIdType>::Impl* const graph
 ) : m_graph(graph)
 {
@@ -180,7 +180,7 @@ VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>
  */
 template <template <typename> class GraphType, typename VertexIdType>
 typename Vertex<GraphType, VertexIdType>::Iterator
-VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::begin(
+VertexIteratorProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::begin(
 ) const
 {
   return typename Vertex<GraphType, VertexIdType>::Iterator(m_graph, boost::vertices(*m_graph));
@@ -191,7 +191,7 @@ VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>
  */
 template <template <typename> class GraphType, typename VertexIdType>
 typename Vertex<GraphType, VertexIdType>::Iterator
-VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::end(
+VertexIteratorProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::end(
 ) const
 {
   IteratorType end = boost::vertices(*m_graph).second;

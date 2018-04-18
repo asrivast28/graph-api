@@ -71,13 +71,13 @@ public:
   VertexIdType
   inDegree() const;
 
-  typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>
+  EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexIdType>::InEdgeIterator>
   inEdges() const;
 
   VertexIdType
   outDegree() const;
 
-  typename ::EdgeIterator<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>
+  EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>
   outEdges() const;
 
   bool
@@ -95,18 +95,18 @@ private:
  * @tparam VertexIdType  Unsigned type for storing vertex ids.
  */
 template <template <typename> class GraphType, typename VertexIdType, typename Enable = void>
-class VertexIterator;
+class VertexIteratorProvider;
 
 /**
- * @brief  Partial specialization of VertexIterator class for Boost graphs.
+ * @brief  Partial specialization of VertexIteratorProvider class for Boost graphs.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-class VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>> {
+class VertexIteratorProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>> {
 private:
   using IteratorType = typename GraphType<VertexIdType>::VertexIterator;
 
 public:
-  VertexIterator(const typename GraphType<VertexIdType>::Impl* const);
+  VertexIteratorProvider(const typename GraphType<VertexIdType>::Impl* const);
 
   typename Vertex<GraphType, VertexIdType>::Iterator
   begin() const;
@@ -116,6 +116,6 @@ public:
 
 private:
   const typename GraphType<VertexIdType>::Impl* const m_graph;
-}; // class VertexIterator<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>
+}; // class VertexIteratorProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>
 
 #endif // VERTEX_HPP_

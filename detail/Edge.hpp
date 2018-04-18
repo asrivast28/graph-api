@@ -122,7 +122,7 @@ Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator
  * @param edges  Pair of begin and end iterator implementations over the edges.
  */
 template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
-EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>>::EdgeIterator(
+EdgeIteratorProvider<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>>::EdgeIteratorProvider(
   const typename GraphType<VertexIdType>::Impl* const graph,
   const std::pair<IteratorType, IteratorType>& edges
 ) : m_graph(graph),
@@ -135,7 +135,7 @@ EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, Ve
  */
 template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
 typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
-EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>>::begin(
+EdgeIteratorProvider<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>>::begin(
 ) const
 {
   return typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>(m_graph, m_edges);
@@ -146,7 +146,7 @@ EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, Ve
  */
 template <template <typename> class GraphType, typename VertexIdType, typename IteratorType>
 typename Edge<GraphType, VertexIdType>::template Iterator<IteratorType>
-EdgeIterator<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>>::end(
+EdgeIteratorProvider<GraphType, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexIdType>>::end(
 ) const
 {
   IteratorType end = m_edges.second;
