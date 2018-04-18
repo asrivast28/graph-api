@@ -63,7 +63,7 @@ Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator
 }
 
 /**
- * @brief  Increments the iterator.
+ * @brief  Increments the iterator using the prefix increment operator.
  */
 template <template <typename> class GraphType, typename VertexIdType>
 template <typename IteratorType>
@@ -75,6 +75,22 @@ Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator
     ++m_current;
   }
   return *this;
+}
+
+/**
+ * @brief  Increments the iterator using the postfix increment iterator.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+template <typename IteratorType>
+typename Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::template Iterator<IteratorType>
+Edge<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator<IteratorType>::operator++(
+  int
+)
+{
+
+  auto copy = *this;
+  operator++();
+  return copy;
 }
 
 /**

@@ -45,6 +45,9 @@ public:
     Iterator&
     operator++();
 
+    Iterator
+    operator++(int);
+
     bool
     operator==(const Iterator&) const;
 

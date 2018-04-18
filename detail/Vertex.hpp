@@ -115,7 +115,7 @@ Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterat
 }
 
 /**
- * @brief  Increments the iterator.
+ * @brief  Increments the iterator using the prefix increment iterator.
  */
 template <template <typename> class GraphType, typename VertexIdType>
 typename Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator&
@@ -126,6 +126,20 @@ Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterat
     ++m_current;
   }
   return *this;
+}
+
+/**
+ * @brief  Increments the iterator using the postfix increment iterator.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+typename Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::Iterator::operator++(
+  int
+)
+{
+  auto copy = *this;
+  operator++();
+  return copy;
 }
 
 /**
