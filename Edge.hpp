@@ -113,8 +113,8 @@ public:
   end() const;
 
 private:
-  const typename GraphType<VertexIdType>::Impl* const m_graph;
-  const std::pair<IteratorType, IteratorType> m_edges;
+  const typename GraphType<VertexIdType>::Impl* m_graph;
+  std::pair<IteratorType, IteratorType> m_edges;
 }; // class EdgeIteratorProvider<GraphType, VertexIdType, IteratorType, BoostEnable<GraphType, VertexIdType>>
 
 #endif // EDGE_HPP_

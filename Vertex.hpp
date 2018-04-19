@@ -118,7 +118,7 @@ public:
   end() const;
 
 private:
-  const typename GraphType<VertexIdType>::Impl* const m_graph;
+  const typename GraphType<VertexIdType>::Impl* m_graph;
 }; // class VertexIteratorProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>
 
 #endif // VERTEX_HPP_
