@@ -7,6 +7,7 @@
 
 #include "Edge.hpp"
 #include "GraphType.hpp"
+#include "SimplePathProvider.hpp"
 
 #include <iterator>
 
@@ -82,6 +83,9 @@ public:
 
   EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexIdType>::OutEdgeIterator>
   outEdges() const;
+
+  SimplePathProvider<GraphType, VertexIdType>
+  simplePaths(const VertexIdType&) const;
 
   bool
   hasEdgeTo(const Vertex<GraphType, VertexIdType>&) const;

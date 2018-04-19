@@ -87,6 +87,18 @@ Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::outEdg
 }
 
 /**
+ * @brief  Returns a provider for all the simple paths of a given length starting from this vertex.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+SimplePathProvider<GraphType, VertexIdType>
+Vertex<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::simplePaths(
+  const VertexIdType& l
+) const
+{
+  return SimplePathProvider<GraphType, VertexIdType>(*this, l);
+}
+
+/**
  * @brief  Checks if this vertex has an edge to the given vertex.
  */
 template <template <typename> class GraphType, typename VertexIdType>

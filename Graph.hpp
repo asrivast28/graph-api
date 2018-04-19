@@ -83,6 +83,7 @@ private:
 #include "detail/GraphFile.hpp"
 #include "detail/Edge.hpp"
 #include "detail/Vertex.hpp"
+#include "detail/SimplePathProvider.hpp"
 #include "detail/Graph.hpp"
 
 #endif // GRAPH_HPP_
