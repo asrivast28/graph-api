@@ -6,6 +6,12 @@
 #define DETAIL_SIMPLEPATHPROVIDER_HPP_
 
 
+/**
+ * @brief  Constructs the provider for paths starting from a path.
+ *
+ * @param s  Source vertex for all the simple paths.
+ * @param l  Length of all the simple paths.
+ */
 template <template <typename> class GraphType, typename VertexIdType>
 SimplePathProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::SimplePathProvider(
   const Vertex& s,
@@ -20,9 +26,16 @@ SimplePathProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdTy
   }
 }
 
+/**
+ * @brief Returns the next simple path after pruning.
+ *
+ * @param pruner  Function which returns true if a path is to be pruned.
+ */
 template <template <typename> class GraphType, typename VertexIdType>
+template <typename Pruner>
 std::vector<VertexIdType>
 SimplePathProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::next(
+  const Pruner& pruner
 )
 {
   while (!m_stack.empty()) {
@@ -44,11 +57,27 @@ SimplePathProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdTy
         std::vector<VertexIdType> path(m_visited);
         m_visited.pop_back();
         m_stack.pop_back();
-        return path;
+        if (pruner(path)) {
+          continue;
+        }
+        else {
+          return path;
+        }
       }
     }
   }
   return std::vector<VertexIdType>();
+}
+
+/**
+ * @brief Returns the next simple path without any pruning.
+ */
+template <template <typename> class GraphType, typename VertexIdType>
+std::vector<VertexIdType>
+SimplePathProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::next(
+)
+{
+  return this->next([] (const std::vector<VertexIdType>&) { return false; });
 }
 
 #endif // DETAIL_SIMPLEPATHPROVIDER_HPP_
