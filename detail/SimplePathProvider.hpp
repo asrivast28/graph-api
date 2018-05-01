@@ -32,10 +32,10 @@ SimplePathProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdTy
  * @param pruner  Function which returns true if a path is to be pruned.
  */
 template <template <typename> class GraphType, typename VertexIdType>
-template <typename Pruner>
+template <typename PrunerType>
 std::vector<VertexIdType>
 SimplePathProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::next(
-  const Pruner& pruner
+  const PrunerType& pruner
 )
 {
   while (!m_stack.empty()) {
@@ -57,7 +57,7 @@ SimplePathProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdTy
         std::vector<VertexIdType> path(m_visited);
         m_visited.pop_back();
         m_stack.pop_back();
-        if (pruner(path)) {
+        if (pruner && pruner(path)) {
           continue;
         }
         else {

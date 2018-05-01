@@ -31,9 +31,9 @@ private:
 public:
   SimplePathProvider(const Vertex&, const VertexIdType&);
 
-  template <typename Pruner>
+  template <typename PrunerType>
   std::vector<VertexIdType>
-  next(const Pruner&);
+  next(const PrunerType&);
 
   std::vector<VertexIdType>
   next();
