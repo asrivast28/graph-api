@@ -35,6 +35,10 @@ struct VertexInfo {
   UnsignedType id;
 };
 
+struct VertexLabel {
+  std::string label;
+};
+
 #include "detail/GraphFile.hpp"
 #include "detail/Edge.hpp"
 #include "detail/Vertex.hpp"

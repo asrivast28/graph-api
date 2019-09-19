@@ -6,8 +6,11 @@
 #define DETAIL_GRAPH_HPP_
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/graphviz.hpp>
 #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+
+#include <fstream>
 
 
 /**
@@ -268,36 +271,66 @@ private:
 
 
 /**
- * @brief  Returns the number of edges in the graph.
+ * @brief  Partial specialization of Graph class for Boost graphs with VertexLabel as vertex property.
  */
-template <template <typename> class GraphType, typename VertexIdType>
-size_t
-Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::edgeCount(
-) const
-{
-  return static_cast<size_t>(boost::num_edges(m_graph));
-}
+template <template <typename, typename> class GraphType, typename VertexIdType>
+class Graph<GraphType, VertexLabel, VertexIdType, EnableBoostAll<GraphType, VertexLabel, VertexIdType>> {
+public:
+  using Vertex = typename GraphType<VertexLabel, VertexIdType>::VertexType;
 
-/**
- * @brief  Checks the existence of an edge between the given vertices.
- */
-template <template <typename> class GraphType, typename VertexIdType>
-bool
-Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::edgeExists(
-  const Vertex& u,
-  const Vertex& v
-) const
-{
-  return u.hasEdgeTo(v);
-}
+public:
+  /**
+   * @brief  Constructor that crates vertices with given labels, with no edges.
+   *
+   * @param vertexLabels  Labels of all the vertices.
+   */
+  Graph(
+    const std::vector<std::string>& vertexLabels
+  ) : m_graph(),
+      m_idVertexMap(vertexLabels.size())
+  {
+    auto id = 0u;
+    for (const auto& label: vertexLabels) {
+      auto vertex = boost::add_vertex(m_graph);
+      m_graph[vertex].label = label;
+      m_idVertexMap[id] = vertex;
+      ++id;
+    }
+  }
 
-/**
- * @brief  Default destructor.
- */
-template <template <typename> class GraphType, typename VertexIdType>
-Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>>::~Graph(
-)
-{
-}
+  /**
+   * @brief  Adds an edge between the two given vertices.
+   */
+  bool
+  addEdge(
+    const VertexIdType source,
+    const VertexIdType dest
+  )
+  {
+    auto edge = boost::add_edge(m_idVertexMap.at(source), m_idVertexMap.at(dest), m_graph);
+    return edge.second;
+  }
+
+  /**
+   * @brief  Writes the graph to a Graphviz format dot file.
+   */
+  void
+  writeGraphviz(
+    const std::string& dotFile
+  ) const
+  {
+    std::ofstream stream(dotFile);
+    auto vertex_label_writer = [this] (std::ostream& stream, const Vertex& v) { stream << "[label=\"" << m_graph[v].label << "\"]"; };
+    boost::write_graphviz(stream, m_graph, vertex_label_writer);
+  }
+
+  ~Graph()
+  {
+  }
+
+private:
+  typename GraphType<VertexLabel, VertexIdType>::Impl m_graph;
+  std::vector<Vertex> m_idVertexMap;
+}; // class Graph<GraphType, UnsignedType, EnableBoostAll<GraphType, VertexLabel, UnsignedType>>
 
 #endif // DETAIL_GRAPH_HPP_
