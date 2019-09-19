@@ -11,37 +11,13 @@
 
 
 /**
- * @brief  Class that provides simple path provider functionality.
+ * @brief Class that provides simple path provider functionality.
  *
- * @tparam GraphType     Type of the graph implementation.
- * @tparam VertexIdType  Unsigned type for storing vertex ids.
+ * @tparam GraphType Type of the graph implementation.
+ * @tparam VertexProperties Type of the vertex properties.
+ * @tparam VertexIdType Unsigned type for storing vertex ids.
  */
-template <template <typename> class GraphType, typename VertexIdType, typename Enable = void>
+template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType, typename Enable = void>
 class SimplePathProvider;
-
-/**
- * @brief  Partial specialization of SimplePathProvider class for Boost graphs.
- */
-template <template <typename> class GraphType, typename VertexIdType>
-class SimplePathProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexIdType>> {
-private:
-  using Vertex = typename ::Vertex<GraphType, VertexIdType>;
-  using OutEdgeIterator = typename ::Edge<GraphType, VertexIdType>::OutEdgeIterator;
-
-public:
-  SimplePathProvider(const Vertex&, const VertexIdType&);
-
-  template <typename PrunerType>
-  std::vector<VertexIdType>
-  next(const PrunerType&);
-
-  std::vector<VertexIdType>
-  next();
-
-private:
-  std::vector<std::pair<OutEdgeIterator, OutEdgeIterator>> m_stack;
-  std::vector<VertexIdType> m_visited;
-  const VertexIdType m_pathLength;
-}; // class SimplePathProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, UnsignedType>>
 
 #endif // SIMPLEPATHPROVIDER_HPP_

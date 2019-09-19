@@ -15,70 +15,25 @@
 
 
 /**
- * @brief  Class that provides graph functionality.
+ * @brief Class that provides graph functionality.
  *
- * @tparam GraphType     Type of the graph implementation.
- * @tparam VertexIdType  Unsigned type for storing vertex ids.
+ * @tparam GraphType Type of the graph implementation.
+ * @tparam VertexProperties Type of the vertex properties.
+ * @tparam VertexIdType Unsigned type for storing vertex ids.
  */
-template <template <typename> class GraphType, typename VertexIdType, typename Enable = void>
+template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType, typename Enable = void>
 class Graph;
 
+
 /**
- * @brief  Partial specialization of Graph class for Boost graphs.
+ * @brief Struct used for providing bundled vertex IDs.
+ *
+ * @tparam UnsignedType Type of vertex id.
  */
-template <template <typename> class GraphType, typename UnsignedType>
-class Graph<GraphType, UnsignedType, EnableBoostAll<GraphType, UnsignedType>> {
-public:
-  using VertexIdType = UnsignedType;
-
-  using Vertex = typename ::Vertex<GraphType, VertexIdType>;
-  using Edge = typename ::Edge<GraphType, VertexIdType>;
-
-public:
-  Graph(const std::string&, const enum GraphFileType);
-
-  bool
-  isDirected() const;
-
-  VertexIteratorProvider<GraphType, VertexIdType>
-  vertices() const;
-
-  template <typename Comparator>
-  std::vector<Vertex>
-  sorted(Comparator&&) const;
-
-  template <typename Comparator>
-  Vertex
-  minVertex(Comparator&&) const;
-
-  VertexIdType
-  vertexCount() const;
-
-  Vertex
-  getVertexFromId(const VertexIdType&) const;
-
-  VertexIdType
-  minVertexId() const;
-
-  VertexIdType
-  maxVertexId() const;
-
-  EdgeIteratorProvider<GraphType, VertexIdType>
-  edges() const;
-
-  size_t
-  edgeCount() const;
-
-  bool
-  edgeExists(const Vertex&, const Vertex&) const;
-
-  ~Graph();
-
-private:
-  typename GraphType<VertexIdType>::Impl m_graph;
-  std::unordered_map<VertexIdType, typename GraphType<VertexIdType>::VertexType> m_idVertexMap;
-}; // class Graph<GraphType, UnsignedType, EnableBoostAll<GraphType, UnsignedType>>
-
+template <typename UnsignedType>
+struct VertexInfo {
+  UnsignedType id;
+};
 
 #include "detail/GraphFile.hpp"
 #include "detail/Edge.hpp"
