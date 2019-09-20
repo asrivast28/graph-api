@@ -301,14 +301,25 @@ public:
   /**
    * @brief  Adds an edge between the two given vertices.
    */
-  bool
+  void
   addEdge(
     const VertexIdType source,
     const VertexIdType dest
   )
   {
-    auto edge = boost::add_edge(m_idVertexMap.at(source), m_idVertexMap.at(dest), m_graph);
-    return edge.second;
+    boost::add_edge(m_idVertexMap.at(source), m_idVertexMap.at(dest), m_graph);
+  }
+
+  /**
+   * @brief  Removes an edge between the two given vertices.
+   */
+  void
+  removeEdge(
+    const VertexIdType source,
+    const VertexIdType dest
+  )
+  {
+    boost::remove_edge(m_idVertexMap.at(source), m_idVertexMap.at(dest), m_graph);
   }
 
   /**
