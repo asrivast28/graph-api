@@ -332,7 +332,8 @@ public:
   {
     std::ofstream stream(dotFile);
     auto vertex_label_writer = [this] (std::ostream& stream, const Vertex& v) { stream << "[label=\"" << m_graph[v].label << "\"]"; };
-    boost::write_graphviz(stream, m_graph, vertex_label_writer);
+    auto graph_property_writer = [this] (std::ostream& stream) { stream << "concentrate=true;" << std::endl; };
+    boost::write_graphviz(stream, m_graph, vertex_label_writer, boost::default_writer(), graph_property_writer);
   }
 
   ~Graph()
