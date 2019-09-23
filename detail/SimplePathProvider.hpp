@@ -26,7 +26,7 @@ public:
     const Vertex& s,
     const VertexIdType& l
   ) : m_stack(),
-      m_visited(1, s.id()),
+      m_visited(1, s.properties().id),
       m_pathLength(l)
   {
     if (m_pathLength > 0) {
@@ -55,8 +55,8 @@ public:
       else {
         Vertex child = (*(children.first++)).target();
         if (m_visited.size() < m_pathLength) {
-          if (std::find(m_visited.begin(), m_visited.end(), child.id()) == m_visited.end()) {
-            m_visited.push_back(child.id());
+          if (std::find(m_visited.begin(), m_visited.end(), child.properties().id) == m_visited.end()) {
+            m_visited.push_back(child.properties().id);
             auto outEdgeIt = child.outEdges();
             m_stack.push_back(std::make_pair(outEdgeIt.begin(), outEdgeIt.end()));
           }

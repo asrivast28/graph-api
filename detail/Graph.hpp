@@ -5,12 +5,17 @@
 #ifndef DETAIL_GRAPH_HPP_
 #define DETAIL_GRAPH_HPP_
 
-#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/copy.hpp>
+#include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graphviz.hpp>
-#include <boost/graph/vf2_sub_graph_iso.hpp>
+#include <boost/graph/strong_components.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/property_map/property_map.hpp>
 
 #include <fstream>
+#include <unordered_map>
+#include <unordered_set>
+#include <map>
 
 
 /**
@@ -124,8 +129,7 @@ public:
    * @brief  Checks if the graph is directed.
    */
   bool
-  isDirected(
-  ) const
+  isDirected() const
   {
     return boost::is_directed(m_graph);
   }
@@ -178,17 +182,14 @@ public:
     return *(std::min_element(vertices.begin(), vertices.end(), comp));
   }
 
-
   /**
    * @brief  Returns the number of vertices in the graph.
    */
   VertexIdType
-  vertexCount(
-  ) const
+  numVertices() const
   {
     return static_cast<VertexIdType>(boost::num_vertices(m_graph));
   }
-
 
   Vertex
   getVertexFromId(
@@ -198,13 +199,11 @@ public:
     return Vertex(&m_graph, m_idVertexMap.at(v));
   }
 
-
   /**
    * @brief  Returns the minimum id of the vertices in the graph.
    */
   VertexIdType
-  minVertexId(
-  ) const
+  minVertexId() const
   {
     using MapPairType = std::pair<VertexIdType, typename GraphType<VertexInfo<VertexIdType>, VertexIdType>::VertexType>;
     return std::min_element(m_idVertexMap.begin(), m_idVertexMap.end(),
@@ -212,13 +211,11 @@ public:
                            )->first;
   }
 
-
   /**
    * @brief  Returns the maximum id of the vertices in the graph.
    */
   VertexIdType
-  maxVertexId(
-  ) const
+  maxVertexId() const
   {
     using MapPairType = std::pair<VertexIdType, typename GraphType<VertexInfo<VertexIdType>, VertexIdType>::VertexType>;
     return std::max_element(m_idVertexMap.begin(), m_idVertexMap.end(),
@@ -226,13 +223,11 @@ public:
                            )->first;
   }
 
-
   /**
    * @brief  Returns an iterator provider for all the edges in the graph.
    */
   EdgeIteratorProvider<GraphType, VertexInfo<VertexIdType>, VertexIdType>
-  edges(
-  ) const
+  edges() const
   {
     return EdgeIteratorProvider<GraphType, VertexInfo<VertexIdType>, VertexIdType>(&m_graph, boost::edges(m_graph));
   }
@@ -241,12 +236,10 @@ public:
    * @brief  Returns the number of edges in the graph.
    */
   size_t
-  edgeCount(
-  ) const
+  numEdges() const
   {
     return static_cast<size_t>(boost::num_edges(m_graph));
   }
-
 
   /**
    * @brief  Checks the existence of an edge between the given vertices.
@@ -269,14 +262,16 @@ private:
   std::unordered_map<VertexIdType, typename GraphType<VertexInfo<VertexIdType>, VertexIdType>::VertexType> m_idVertexMap;
 }; // class Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexInfo<VertexIdType>, VertexIdType>>
 
-
 /**
  * @brief  Partial specialization of Graph class for Boost graphs with VertexLabel as vertex property.
  */
 template <template <typename, typename> class GraphType, typename VertexIdType>
 class Graph<GraphType, VertexLabel, VertexIdType, EnableBoostAll<GraphType, VertexLabel, VertexIdType>> {
 public:
-  using Vertex = typename GraphType<VertexLabel, VertexIdType>::VertexType;
+  using Vertex = typename ::Vertex<GraphType, VertexLabel, VertexIdType>;
+  using Edge = typename ::Edge<GraphType, VertexLabel, VertexIdType>;
+  using VertexType = typename GraphType<VertexLabel, VertexIdType>::VertexType;
+  using EdgeType = typename GraphType<VertexLabel, VertexIdType>::EdgeType;
 
 public:
   /**
@@ -299,7 +294,28 @@ public:
   }
 
   /**
-   * @brief  Adds an edge between the two given vertices.
+   * @brief  Copy constructor.
+   */
+  Graph(
+    const Graph& other
+  ) : m_graph(),
+      m_idVertexMap(other.m_idVertexMap)
+  {
+    boost::copy_graph(other.m_graph, m_graph);
+  }
+
+  /**
+   * @brief  Move constructor.
+   */
+  Graph(
+    Graph&& other
+  ) : m_graph(other.m_graph),
+      m_idVertexMap(std::move(other.m_idVertexMap))
+  {
+  }
+
+  /**
+   * @brief  Adds an edge between the two vertices, identified by their IDs.
    */
   void
   addEdge(
@@ -311,7 +327,51 @@ public:
   }
 
   /**
+   * @brief  Checks the existence of an edge between the given vertices.
+   */
+  bool
+  edgeExists(
+    const Vertex& u,
+    const Vertex& v
+  ) const
+  {
+    return u.hasEdgeTo(v);
+  }
+
+  /**
+   * @brief  Removes the given edge.
+   */
+  void
+  removeEdge(
+    Edge&& e
+  )
+  {
+    boost::remove_edge(*e, m_graph);
+  }
+
+  /**
    * @brief  Removes an edge between the two given vertices.
+   */
+  void
+  removeEdge(
+    const Vertex& v,
+    const Vertex& u
+  )
+  {
+    boost::remove_edge(*v, *u, m_graph);
+  }
+
+  /**
+   * @brief  Returns the number of vertices in the graph.
+   */
+  VertexIdType
+  numVertices() const
+  {
+    return static_cast<VertexIdType>(boost::num_vertices(m_graph));
+  }
+
+  /**
+   * @brief  Removes an edge between the two given vertices, identified by their IDs.
    */
   void
   removeEdge(
@@ -323,6 +383,49 @@ public:
   }
 
   /**
+   * @brief  Returns an iterator provider for all the edges in the graph.
+   */
+  EdgeIteratorProvider<GraphType, VertexLabel, VertexIdType>
+  edges() const
+  {
+    return EdgeIteratorProvider<GraphType, VertexLabel, VertexIdType>(&m_graph, boost::edges(m_graph));
+  }
+
+  /**
+   * @brief  Removes all the bidirected edges from the graph.
+   */
+  void
+  removeBidirectedEdges()
+  {
+    std::unordered_set<Edge, typename Edge::Hash> remove;
+    for (auto e: edges()) {
+      if (edgeExists(e.target(), e.source())) {
+        remove.insert(e);
+      }
+    }
+    for (auto e: remove) {
+      removeEdge(std::move(e));
+      removeEdge(*e.target(), *e.source());
+    }
+  }
+
+  /**
+   * @brief  Checks if the graph has any cycles.
+   */
+  bool
+  hasCycles() const
+  {
+    bool hasCycles = false;
+    std::unordered_map<VertexType, size_t> components;
+    boost::associative_property_map<std::unordered_map<VertexType, size_t>> componentMap(components);
+    auto numComponents = boost::strong_components(m_graph, componentMap);
+    if (numComponents < numVertices()) {
+      hasCycles = true;
+    }
+    return hasCycles;
+  }
+
+  /**
    * @brief  Writes the graph to a Graphviz format dot file.
    */
   void
@@ -331,7 +434,7 @@ public:
   ) const
   {
     std::ofstream stream(dotFile);
-    auto vertex_label_writer = [this] (std::ostream& stream, const Vertex& v) { stream << "[label=\"" << m_graph[v].label << "\"]"; };
+    auto vertex_label_writer = [this] (std::ostream& stream, const VertexType& v) { stream << "[label=\"" << m_graph[v].label << "\"]"; };
     auto graph_property_writer = [this] (std::ostream& stream) { stream << "concentrate=true;" << std::endl; };
     boost::write_graphviz(stream, m_graph, vertex_label_writer, boost::default_writer(), graph_property_writer);
   }
@@ -342,7 +445,7 @@ public:
 
 private:
   typename GraphType<VertexLabel, VertexIdType>::Impl m_graph;
-  std::vector<Vertex> m_idVertexMap;
+  std::vector<VertexType> m_idVertexMap;
 }; // class Graph<GraphType, UnsignedType, EnableBoostAll<GraphType, VertexLabel, UnsignedType>>
 
 #endif // DETAIL_GRAPH_HPP_

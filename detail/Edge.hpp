@@ -7,6 +7,8 @@
 
 #include "Vertex.hpp"
 
+#include <boost/functional/hash.hpp>
+
 
 /**
  * @brief  Partial specialization of Edge class for Boost graphs.
@@ -128,6 +130,24 @@ public:
   }
 
   /**
+   * @brief  Returns the underlying edge for this wrapper.
+   */
+  const EdgeType&
+  operator*() const
+  {
+    return m_edge;
+  }
+
+  /**
+   * @brief  Compares this edge with another edge.
+   */
+  bool
+  operator==(const Edge& other) const
+  {
+    return (m_graph == other.m_graph) && (m_edge == other.m_edge);
+  }
+
+  /**
    * @brief  Returns the source vertex of this edge.
    */
   typename ::Vertex<GraphType, VertexProperties, VertexIdType>
@@ -147,10 +167,38 @@ public:
     return typename ::Vertex<GraphType, VertexProperties, VertexIdType>(m_graph, boost::target(m_edge, *m_graph));
   }
 
+public:
+  /**
+   * @brief  Hash provider for the edge.
+   */
+  class Hash {
+  public:
+    using VertexType = typename GraphType<VertexProperties, VertexIdType>::VertexType;
+
+  public:
+    Hash()
+      : m_hasher()
+    {
+    }
+
+    size_t
+    operator()(
+      const Edge& e
+    ) const
+    {
+      // Use boost::hash for hashing the edge as {source, target} ordered pair
+      return m_hasher(std::make_pair(*e.source(), *e.target()));
+    }
+
+  private:
+    boost::hash<std::pair<VertexType, VertexType>> m_hasher;
+  };
+
 private:
   const GraphImpl* m_graph;
   EdgeType m_edge;
 }; // class Edge<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>>
+
 
 /**
  * @brief  Partial specialization of EdgeIteratorProvider class for Boost graphs.

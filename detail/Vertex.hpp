@@ -127,13 +127,22 @@ public:
   }
 
   /**
+   * @brief  Returns the underlying vertex for this wrapper.
+   */
+  const VertexType&
+  operator*() const
+  {
+    return m_vertex;
+  }
+
+  /**
    * @brief  Returns the id of this vertex.
    */
-  VertexIdType
-  id(
+  const VertexProperties&
+  properties(
   ) const
   {
-    return (*m_graph)[m_vertex].id;
+    return (*m_graph)[m_vertex];
   }
 
   /**
