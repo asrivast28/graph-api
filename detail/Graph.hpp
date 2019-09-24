@@ -315,6 +315,24 @@ public:
   }
 
   /**
+   * @brief  Returns the number of vertices in the graph.
+   */
+  VertexIdType
+  numVertices() const
+  {
+    return static_cast<VertexIdType>(boost::num_vertices(m_graph));
+  }
+
+  /**
+   * @brief  Returns an iterator provider for all the edges in the graph.
+   */
+  EdgeIteratorProvider<GraphType, VertexLabel, VertexIdType>
+  edges() const
+  {
+    return EdgeIteratorProvider<GraphType, VertexLabel, VertexIdType>(&m_graph, boost::edges(m_graph));
+  }
+
+  /**
    * @brief  Adds an edge between the two vertices, identified by their IDs.
    */
   void
@@ -362,48 +380,6 @@ public:
   }
 
   /**
-   * @brief  Removes an edge between the two given vertices.
-   */
-  void
-  removeEdge(
-    const Vertex& v,
-    const Vertex& u
-  )
-  {
-    boost::remove_edge(*v, *u, m_graph);
-  }
-
-  /**
-   * @brief  Returns the number of vertices in the graph.
-   */
-  VertexIdType
-  numVertices() const
-  {
-    return static_cast<VertexIdType>(boost::num_vertices(m_graph));
-  }
-
-  /**
-   * @brief  Removes an edge between the two given vertices, identified by their IDs.
-   */
-  void
-  removeEdge(
-    const VertexIdType u,
-    const VertexIdType v
-  )
-  {
-    boost::remove_edge(m_idVertexMap.at(u), m_idVertexMap.at(v), m_graph);
-  }
-
-  /**
-   * @brief  Returns an iterator provider for all the edges in the graph.
-   */
-  EdgeIteratorProvider<GraphType, VertexLabel, VertexIdType>
-  edges() const
-  {
-    return EdgeIteratorProvider<GraphType, VertexLabel, VertexIdType>(&m_graph, boost::edges(m_graph));
-  }
-
-  /**
    * @brief  Removes all the bidirected edges from the graph.
    */
   void
@@ -417,7 +393,6 @@ public:
     }
     for (auto e: remove) {
       removeEdge(std::move(e));
-      removeEdge(*e.target(), *e.source());
     }
   }
 
