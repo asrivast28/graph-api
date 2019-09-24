@@ -138,8 +138,7 @@ public:
    * @brief  Returns an iterator provider for all the vertices in the graph.
    */
   VertexIteratorProvider<GraphType, VertexInfo<VertexIdType>, VertexIdType>
-  vertices(
-  ) const
+  vertices() const
   {
     return VertexIteratorProvider<GraphType, VertexInfo<VertexIdType>, VertexIdType>(&m_graph);
   }
@@ -321,6 +320,15 @@ public:
   numVertices() const
   {
     return static_cast<VertexIdType>(boost::num_vertices(m_graph));
+  }
+
+  /**
+   * @brief  Returns an iterator provider for all the vertices in the graph.
+   */
+  VertexIteratorProvider<GraphType, VertexLabel, VertexIdType>
+  vertices() const
+  {
+    return VertexIteratorProvider<GraphType, VertexLabel, VertexIdType>(&m_graph);
   }
 
   /**
