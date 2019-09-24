@@ -319,11 +319,11 @@ public:
    */
   void
   addEdge(
-    const VertexIdType source,
-    const VertexIdType dest
+    const VertexIdType u,
+    const VertexIdType v
   )
   {
-    boost::add_edge(m_idVertexMap.at(source), m_idVertexMap.at(dest), m_graph);
+    boost::add_edge(m_idVertexMap.at(u), m_idVertexMap.at(v), m_graph);
   }
 
   /**
@@ -336,6 +336,18 @@ public:
   ) const
   {
     return u.hasEdgeTo(v);
+  }
+
+  /**
+   * @brief  Checks the existence of an edge between the given vertices, using their IDs.
+   */
+  bool
+  edgeExists(
+    const VertexIdType u,
+    const VertexIdType v
+  ) const
+  {
+    return boost::edge(m_idVertexMap.at(u), m_idVertexMap.at(v), m_graph).second;
   }
 
   /**
@@ -375,11 +387,11 @@ public:
    */
   void
   removeEdge(
-    const VertexIdType source,
-    const VertexIdType dest
+    const VertexIdType u,
+    const VertexIdType v
   )
   {
-    boost::remove_edge(m_idVertexMap.at(source), m_idVertexMap.at(dest), m_graph);
+    boost::remove_edge(m_idVertexMap.at(u), m_idVertexMap.at(v), m_graph);
   }
 
   /**
