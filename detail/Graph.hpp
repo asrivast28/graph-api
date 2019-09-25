@@ -353,7 +353,7 @@ public:
   /**
    * @brief Writes the graph, with VertexLabel property, to a Graphviz format dot file.
    */
-  EnableBoostAdjacencyList<GraphType, VertexLabel, VertexIdType>
+  EnableBoostAll<GraphType, VertexLabel, VertexIdType>
   writeGraphviz(
     const std::string& dotFile
   ) const
