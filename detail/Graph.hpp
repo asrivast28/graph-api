@@ -82,8 +82,25 @@ construct(
   boost::add_edges(edgeBegin, edgeEnd, graph);
 }
 
+template <template <typename, typename> class GraphType, typename VertexIdType>
+EnableBoostAll<GraphType, VertexLabel, VertexIdType>
+construct(
+  const std::vector<std::string>& vertexLabels,
+  typename GraphType<VertexLabel, VertexIdType>::Impl& graph,
+  std::unordered_map<VertexIdType, typename GraphType<VertexLabel, VertexIdType>::VertexType>& idVertexMap
+)
+{
+  auto id = 0u;
+  for (const auto& label: vertexLabels) {
+    auto vertex = boost::add_vertex(graph);
+    graph[vertex].label = label;
+    idVertexMap.insert(std::make_pair(id, vertex));
+    ++id;
+  }
+}
+
 /**
- * @brief  Partial specialization of Graph class for Boost graphs with VertexInfo as vertex property.
+ * @brief  Partial specialization of Graph class for Boost graphs.
  */
 template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType>
 class Graph<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>> {
@@ -137,13 +154,7 @@ public:
   ) : m_graph(),
       m_idVertexMap()
   {
-    auto id = 0u;
-    for (const auto& label: vertexLabels) {
-      auto vertex = boost::add_vertex(m_graph);
-      m_graph[vertex].label = label;
-      m_idVertexMap[id] = vertex;
-      ++id;
-    }
+    construct<GraphType, VertexIdType>(vertexLabels, m_graph, m_idVertexMap);
   }
 
   /**
@@ -340,9 +351,9 @@ public:
   }
 
   /**
-   * @brief  Writes the graph to a Graphviz format dot file.
+   * @brief  Writes the graph, with VertexLabel property, to a Graphviz format dot file.
    */
-  void
+  EnableBoostAdjacencyList<GraphType, VertexLabel, VertexIdType>
   writeGraphviz(
     const std::string& dotFile
   ) const
