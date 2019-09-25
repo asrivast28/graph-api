@@ -85,11 +85,13 @@ construct(
 /**
  * @brief  Partial specialization of Graph class for Boost graphs with VertexInfo as vertex property.
  */
-template <template <typename, typename> class GraphType, typename VertexIdType>
-class Graph<GraphType, VertexInfo<VertexIdType>, VertexIdType, EnableBoostAll<GraphType, VertexInfo<VertexIdType>, VertexIdType>> {
+template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType>
+class Graph<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>> {
 public:
-  using Vertex = typename ::Vertex<GraphType, VertexInfo<VertexIdType>, VertexIdType>;
-  using Edge = typename ::Edge<GraphType, VertexInfo<VertexIdType>, VertexIdType>;
+  using Vertex = typename ::Vertex<GraphType, VertexProperties, VertexIdType>;
+  using Edge = typename ::Edge<GraphType, VertexProperties, VertexIdType>;
+  using VertexType = typename GraphType<VertexProperties, VertexIdType>::VertexType;
+  using EdgeType = typename GraphType<VertexProperties, VertexIdType>::EdgeType;
 
 public:
   /**
@@ -126,154 +128,6 @@ public:
   }
 
   /**
-   * @brief  Checks if the graph is directed.
-   */
-  bool
-  isDirected() const
-  {
-    return boost::is_directed(m_graph);
-  }
-
-  /**
-   * @brief  Returns an iterator provider for all the vertices in the graph.
-   */
-  VertexIteratorProvider<GraphType, VertexInfo<VertexIdType>, VertexIdType>
-  vertices() const
-  {
-    return VertexIteratorProvider<GraphType, VertexInfo<VertexIdType>, VertexIdType>(&m_graph);
-  }
-
-  /**
-   * @brief  Returns a vector of vertices sorted using the provided comparator.
-   *
-   * @tparam Comparator  Type of the comparator used for sorting.
-   * @param  comp        Comparator function used for sorting.
-   */
-  template <typename Comparator>
-  std::vector<Vertex>
-  sorted(
-    Comparator&& comp
-  ) const
-  {
-    using VertexType = typename GraphType<VertexInfo<VertexIdType>, VertexIdType>::VertexType;
-    std::vector<Vertex> vertices(boost::num_vertices(m_graph));
-    std::transform(boost::vertices(m_graph).first, boost::vertices(m_graph).second, vertices.begin(), [this](const VertexType& u) { return Vertex(&m_graph, u); });
-    std::sort(vertices.begin(), vertices.end(), comp);
-    return vertices;
-  }
-
-
-  /**
-   * @brief  Returns the minimum vertex using the provided comparator.
-   *
-   * @tparam Comparator  Type of the comparator used for comparison.
-   * @param  comp        Comparator function.
-   */
-  template <typename Comparator>
-  Vertex
-  minVertex(
-    Comparator&& comp
-  ) const
-  {
-    using VertexType = typename GraphType<VertexInfo<VertexIdType>, VertexIdType>::VertexType;
-    std::vector<Vertex> vertices(boost::num_vertices(m_graph));
-    std::transform(boost::vertices(m_graph).first, boost::vertices(m_graph).second, vertices.begin(), [this](const VertexType& u) { return Vertex(&m_graph, u); });
-    return *(std::min_element(vertices.begin(), vertices.end(), comp));
-  }
-
-  /**
-   * @brief  Returns the number of vertices in the graph.
-   */
-  VertexIdType
-  numVertices() const
-  {
-    return static_cast<VertexIdType>(boost::num_vertices(m_graph));
-  }
-
-  Vertex
-  getVertexFromId(
-    const VertexIdType v
-  ) const
-  {
-    return Vertex(&m_graph, m_idVertexMap.at(v));
-  }
-
-  /**
-   * @brief  Returns the minimum id of the vertices in the graph.
-   */
-  VertexIdType
-  minVertexId() const
-  {
-    using MapPairType = std::pair<VertexIdType, typename GraphType<VertexInfo<VertexIdType>, VertexIdType>::VertexType>;
-    return std::min_element(m_idVertexMap.begin(), m_idVertexMap.end(),
-                            [](const MapPairType& a, const MapPairType& b) { return a.first < b.first; }
-                           )->first;
-  }
-
-  /**
-   * @brief  Returns the maximum id of the vertices in the graph.
-   */
-  VertexIdType
-  maxVertexId() const
-  {
-    using MapPairType = std::pair<VertexIdType, typename GraphType<VertexInfo<VertexIdType>, VertexIdType>::VertexType>;
-    return std::max_element(m_idVertexMap.begin(), m_idVertexMap.end(),
-                            [](const MapPairType& a, const MapPairType& b) { return a.first < b.first; }
-                           )->first;
-  }
-
-  /**
-   * @brief  Returns an iterator provider for all the edges in the graph.
-   */
-  EdgeIteratorProvider<GraphType, VertexInfo<VertexIdType>, VertexIdType>
-  edges() const
-  {
-    return EdgeIteratorProvider<GraphType, VertexInfo<VertexIdType>, VertexIdType>(&m_graph, boost::edges(m_graph));
-  }
-
-  /**
-   * @brief  Returns the number of edges in the graph.
-   */
-  size_t
-  numEdges() const
-  {
-    return static_cast<size_t>(boost::num_edges(m_graph));
-  }
-
-  /**
-   * @brief  Checks the existence of an edge between the given vertices.
-   */
-  bool
-  edgeExists(
-    const Vertex& u,
-    const Vertex& v
-  ) const
-  {
-    return u.hasEdgeTo(v);
-  }
-
-  ~Graph()
-  {
-  }
-
-private:
-  typename GraphType<VertexInfo<VertexIdType>, VertexIdType>::Impl m_graph;
-  std::unordered_map<VertexIdType, typename GraphType<VertexInfo<VertexIdType>, VertexIdType>::VertexType> m_idVertexMap;
-}; // class Graph<GraphType, VertexIdType, EnableBoostAll<GraphType, VertexInfo<VertexIdType>, VertexIdType>>
-
-/**
- * @brief  Partial specialization of Graph class for Boost graphs with VertexLabel as vertex property.
- */
-template <template <typename, typename> class GraphType, typename VertexIdType>
-class Graph<GraphType, VertexLabel, VertexIdType, EnableBoostAll<GraphType, VertexLabel, VertexIdType>> {
-public:
-  using Vertex = typename ::Vertex<GraphType, VertexLabel, VertexIdType>;
-  using Edge = typename ::Edge<GraphType, VertexLabel, VertexIdType>;
-  using VertexType = typename GraphType<VertexLabel, VertexIdType>::VertexType;
-  using EdgeType = typename GraphType<VertexLabel, VertexIdType>::EdgeType;
-
-public:
-  /**
    * @brief  Constructor that crates vertices with given labels, with no edges.
    *
    * @param vertexLabels  Labels of all the vertices.
@@ -281,7 +135,7 @@ public:
   Graph(
     const std::vector<std::string>& vertexLabels
   ) : m_graph(),
-      m_idVertexMap(vertexLabels.size())
+      m_idVertexMap()
   {
     auto id = 0u;
     for (const auto& label: vertexLabels) {
@@ -314,6 +168,15 @@ public:
   }
 
   /**
+   * @brief  Checks if the graph is directed.
+   */
+  bool
+  isDirected() const
+  {
+    return boost::is_directed(m_graph);
+  }
+
+  /**
    * @brief  Returns the number of vertices in the graph.
    */
   VertexIdType
@@ -325,19 +188,65 @@ public:
   /**
    * @brief  Returns an iterator provider for all the vertices in the graph.
    */
-  VertexIteratorProvider<GraphType, VertexLabel, VertexIdType>
+  VertexIteratorProvider<GraphType, VertexProperties, VertexIdType>
   vertices() const
   {
-    return VertexIteratorProvider<GraphType, VertexLabel, VertexIdType>(&m_graph);
+    return VertexIteratorProvider<GraphType, VertexProperties, VertexIdType>(&m_graph);
+  }
+
+  /**
+   * @brief  Returns a vector of vertices sorted using the provided comparator.
+   *
+   * @tparam Comparator  Type of the comparator used for sorting.
+   * @param  comp        Comparator function used for sorting.
+   */
+  template <typename Comparator>
+  std::vector<Vertex>
+  sorted(
+    Comparator&& comp
+  ) const
+  {
+    using VertexType = typename GraphType<VertexProperties, VertexIdType>::VertexType;
+    std::vector<Vertex> vertices(boost::num_vertices(m_graph));
+    std::transform(boost::vertices(m_graph).first, boost::vertices(m_graph).second, vertices.begin(), [this](const VertexType& u) { return Vertex(&m_graph, u); });
+    std::sort(vertices.begin(), vertices.end(), comp);
+    return vertices;
+  }
+
+  /**
+   * @brief  Returns the minimum vertex using the provided comparator.
+   *
+   * @tparam Comparator  Type of the comparator used for comparison.
+   * @param  comp        Comparator function.
+   */
+  template <typename Comparator>
+  Vertex
+  minVertex(
+    Comparator&& comp
+  ) const
+  {
+    using VertexType = typename GraphType<VertexProperties, VertexIdType>::VertexType;
+    std::vector<Vertex> vertices(boost::num_vertices(m_graph));
+    std::transform(boost::vertices(m_graph).first, boost::vertices(m_graph).second, vertices.begin(), [this](const VertexType& u) { return Vertex(&m_graph, u); });
+    return *(std::min_element(vertices.begin(), vertices.end(), comp));
+  }
+
+  /**
+   * @brief  Returns the number of edges in the graph.
+   */
+  size_t
+  numEdges() const
+  {
+    return static_cast<size_t>(boost::num_edges(m_graph));
   }
 
   /**
    * @brief  Returns an iterator provider for all the edges in the graph.
    */
-  EdgeIteratorProvider<GraphType, VertexLabel, VertexIdType>
+  EdgeIteratorProvider<GraphType, VertexProperties, VertexIdType>
   edges() const
   {
-    return EdgeIteratorProvider<GraphType, VertexLabel, VertexIdType>(&m_graph, boost::edges(m_graph));
+    return EdgeIteratorProvider<GraphType, VertexProperties, VertexIdType>(&m_graph, boost::edges(m_graph));
   }
 
   /**
@@ -388,20 +297,30 @@ public:
   }
 
   /**
-   * @brief  Removes all the bidirected edges from the graph.
+   * @brief  Removes the edge from u to v.
    */
   void
-  removeBidirectedEdges()
+  removeEdge(
+    const VertexType u,
+    const VertexType v
+  )
   {
-    std::unordered_set<Edge, typename Edge::Hash> remove;
+    boost::remove_edge(u, v, m_graph);
+  }
+
+  /**
+   * @brief  Returns set of all the bidirected edges in the graph.
+   */
+  std::unordered_set<Edge, typename Edge::Hash>
+  getBidirectedEdges() const
+  {
+    std::unordered_set<Edge, typename Edge::Hash> bidirected;
     for (auto e: edges()) {
       if (edgeExists(e.target(), e.source())) {
-        remove.insert(e);
+        bidirected.insert(e);
       }
     }
-    for (auto e: remove) {
-      removeEdge(std::move(e));
-    }
+    return bidirected;
   }
 
   /**
@@ -412,7 +331,7 @@ public:
   {
     bool hasCycles = false;
     std::unordered_map<VertexType, size_t> components;
-    boost::associative_property_map<std::unordered_map<VertexType, size_t>> componentMap(components);
+    boost::associative_property_map<decltype(components)> componentMap(components);
     auto numComponents = boost::strong_components(m_graph, componentMap);
     if (numComponents < numVertices()) {
       hasCycles = true;
@@ -439,8 +358,8 @@ public:
   }
 
 private:
-  typename GraphType<VertexLabel, VertexIdType>::Impl m_graph;
-  std::vector<VertexType> m_idVertexMap;
-}; // class Graph<GraphType, UnsignedType, EnableBoostAll<GraphType, VertexLabel, UnsignedType>>
+  typename GraphType<VertexProperties, VertexIdType>::Impl m_graph;
+  std::unordered_map<VertexIdType, typename GraphType<VertexProperties, VertexIdType>::VertexType> m_idVertexMap;
+}; // class Graph<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>>
 
 #endif // DETAIL_GRAPH_HPP_
