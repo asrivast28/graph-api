@@ -12,7 +12,7 @@
 
 #define IMPL_GRAPH_FILE(FileType)\
 /**\
- * @brief  Returns the list of all the edges read from the file.\
+ * @brief Returns the list of all the edges read from the file.\
  */\
 template <typename VertexIdType>\
 const std::vector<std::pair<VertexIdType, VertexIdType>>&\
@@ -24,7 +24,7 @@ GraphFile<FileType, VertexIdType>::edgeList(\
 }\
 \
 /**\
- * @brief  Returns the set of all the vertex ids read from the file.\
+ * @brief Returns the set of all the vertex ids read from the file.\
 G */\
 template <typename VertexIdType>\
 const std::unordered_set<VertexIdType>&\
@@ -36,9 +36,9 @@ GraphFile<FileType, VertexIdType>::idSet(\
 
 
 /**
- * @brief  Constructor that reads edge list from the given file.
+ * @brief Constructor that reads edge list from the given file.
  *
- * @param fileName  Name of the file from which graph is to be read.
+ * @param fileName Name of the file from which graph is to be read.
  */
 template <typename VertexIdType>
 GraphFile<GraphFileType::EDGE_LIST, VertexIdType>::GraphFile(
@@ -66,11 +66,11 @@ GraphFile<GraphFileType::EDGE_LIST, VertexIdType>::GraphFile(
 IMPL_GRAPH_FILE(GraphFileType::EDGE_LIST)
 
 /**
- * @brief  Constructor that reads edge list from the given file.
+ * @brief Constructor that reads edge list from the given file.
  *
- * @param fileName  Name of the file from which graph is to be read.
- * @param edgeList  List of all the edges read from the file.
- * @param idSet     Set of all the ids read from the file.
+ * @param fileName Name of the file from which graph is to be read.
+ * @param edgeList List of all the edges read from the file.
+ * @param idSet Set of all the ids read from the file.
  */
 template <typename VertexIdType>
 GraphFile<GraphFileType::INCIDENCE_MATRIX, VertexIdType>::GraphFile(
@@ -124,11 +124,11 @@ read_word(
 }
 
 /**
- * @brief  Constructor that reads edge list from the given file.
+ * @brief Constructor that reads edge list from the given file.
  *
- * @param fileName  Name of the file from which graph is to be read.
- * @param edgeList  List of all the edges read from the file.
- * @param idSet     Set of all the ids read from the file.
+ * @param fileName Name of the file from which graph is to be read.
+ * @param edgeList List of all the edges read from the file.
+ * @param idSet Set of all the ids read from the file.
  */
 template <typename VertexIdType>
 GraphFile<GraphFileType::ARG_DATABASE, VertexIdType>::GraphFile(
@@ -156,11 +156,11 @@ IMPL_GRAPH_FILE(GraphFileType::ARG_DATABASE)
 
 
 /**
- * @brief  Constructor that reads edge list from the given file.
+ * @brief Constructor that reads edge list from the given file.
  *
- * @param fileName  Name of the file from which graph is to be read.
- * @param edgeList  List of all the edges read from the file.
- * @param idSet     Set of all the ids read from the file.
+ * @param fileName Name of the file from which graph is to be read.
+ * @param edgeList List of all the edges read from the file.
+ * @param idSet Set of all the ids read from the file.
  */
 template <typename VertexIdType>
 GraphFile<GraphFileType::FHCP, VertexIdType>::GraphFile(

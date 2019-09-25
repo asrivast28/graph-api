@@ -93,6 +93,10 @@ using EnableBoostCSR = typename std::enable_if<std::is_same<GraphType<VertexProp
  * @brief Used for enabling a template for all boost graph types.
  */
 template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType, typename ReturnType = void>
-using EnableBoostAll = typename std::enable_if<std::is_same<decltype(boost::graph_traits<typename GraphType<VertexProperties, VertexIdType>::Impl>::null_vertex()), typename GraphType<VertexProperties, VertexIdType>::VertexType>::value, ReturnType>::type;
+using EnableBoostAll = typename std::enable_if<std::is_same<GraphType<VertexProperties, VertexIdType>, UndirectedAdjacencyList<VertexProperties, VertexIdType>>::value |
+                                               std::is_same<GraphType<VertexProperties, VertexIdType>, BidirectionalAdjacencyList<VertexProperties, VertexIdType>>::value |
+                                               std::is_same<GraphType<VertexProperties, VertexIdType>, DirectedAdjacencyList<VertexProperties, VertexIdType>>::value |
+                                               std::is_same<GraphType<VertexProperties, VertexIdType>, DirectedCSRGraph<VertexProperties, VertexIdType>>::value,
+                                               ReturnType>::type;
 
 #endif // GRAPHTYPE_HPP_

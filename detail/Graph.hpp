@@ -19,12 +19,12 @@
 
 
 /**
- * @brief  Function that constructs a boost adjacency list graph from the given edge list.
+ * @brief Function that constructs a boost adjacency list graph from the given edge list.
  *
- * @param edgeList     List of all the edges in the graph to be built.
- * @param idSet        Set of all the vertex ids in the graph.
- * @param graph        Graph constructed by the function.
- * @param idVertexMap  Map from the file vertex ids to the corresponding in-memory vertex.
+ * @param edgeList List of all the edges in the graph to be built.
+ * @param idSet Set of all the vertex ids in the graph.
+ * @param graph Graph constructed by the function.
+ * @param idVertexMap Map from the file vertex ids to the corresponding in-memory vertex.
  */
 template <template <typename, typename> class GraphType, typename VertexIdType>
 EnableBoostAdjacencyList<GraphType, VertexInfo<VertexIdType>, VertexIdType>
@@ -52,12 +52,12 @@ construct(
 }
 
 /**
- * @brief  Function that constructs a boost adjacency compressed sparse row graph from the given edge list.
+ * @brief Function that constructs a boost adjacency compressed sparse row graph from the given edge list.
  *
- * @param edgeList     List of all the edges in the graph to be built.
- * @param idSet        Set of all the vertex ids in the graph.
- * @param graph        Graph constructed by the function.
- * @param idVertexMap  Map from the file vertex ids to the corresponding in-memory vertex.
+ * @param edgeList List of all the edges in the graph to be built.
+ * @param idSet Set of all the vertex ids in the graph.
+ * @param graph Graph constructed by the function.
+ * @param idVertexMap Map from the file vertex ids to the corresponding in-memory vertex.
  */
 template <template <typename, typename> class GraphType, typename VertexIdType>
 EnableBoostCSR<GraphType, VertexInfo<VertexIdType>, VertexIdType>
@@ -100,7 +100,7 @@ construct(
 }
 
 /**
- * @brief  Partial specialization of Graph class for Boost graphs.
+ * @brief Partial specialization of Graph class for Boost graphs.
  */
 template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType>
 class Graph<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>> {
@@ -112,10 +112,10 @@ public:
 
 public:
   /**
-   * @brief  Constructor that reads graph in edge list format from the given file and builds the in-memory graph.
+   * @brief Constructor that reads graph in edge list format from the given file and builds the in-memory graph.
    *
-   * @param fileName  Name of the file from which graph is to be read.
-   * @param fileType  Type of the file from which graph is to be read.
+   * @param fileName Name of the file from which graph is to be read.
+   * @param fileType Type of the file from which graph is to be read.
    */
   Graph(
     const std::string& fileName,
@@ -145,9 +145,9 @@ public:
   }
 
   /**
-   * @brief  Constructor that crates vertices with given labels, with no edges.
+   * @brief Constructor that crates vertices with given labels, with no edges.
    *
-   * @param vertexLabels  Labels of all the vertices.
+   * @param vertexLabels Labels of all the vertices.
    */
   Graph(
     const std::vector<std::string>& vertexLabels
@@ -158,7 +158,7 @@ public:
   }
 
   /**
-   * @brief  Copy constructor.
+   * @brief Copy constructor.
    */
   Graph(
     const Graph& other
@@ -169,7 +169,7 @@ public:
   }
 
   /**
-   * @brief  Move constructor.
+   * @brief Move constructor.
    */
   Graph(
     Graph&& other
@@ -179,7 +179,7 @@ public:
   }
 
   /**
-   * @brief  Checks if the graph is directed.
+   * @brief Checks if the graph is directed.
    */
   bool
   isDirected() const
@@ -188,7 +188,7 @@ public:
   }
 
   /**
-   * @brief  Returns the number of vertices in the graph.
+   * @brief Returns the number of vertices in the graph.
    */
   VertexIdType
   numVertices() const
@@ -197,7 +197,7 @@ public:
   }
 
   /**
-   * @brief  Returns an iterator provider for all the vertices in the graph.
+   * @brief Returns an iterator provider for all the vertices in the graph.
    */
   VertexIteratorProvider<GraphType, VertexProperties, VertexIdType>
   vertices() const
@@ -206,10 +206,10 @@ public:
   }
 
   /**
-   * @brief  Returns a vector of vertices sorted using the provided comparator.
+   * @brief Returns a vector of vertices sorted using the provided comparator.
    *
-   * @tparam Comparator  Type of the comparator used for sorting.
-   * @param  comp        Comparator function used for sorting.
+   * @tparam Comparator Type of the comparator used for sorting.
+   * @param comp Comparator function used for sorting.
    */
   template <typename Comparator>
   std::vector<Vertex>
@@ -225,10 +225,10 @@ public:
   }
 
   /**
-   * @brief  Returns the minimum vertex using the provided comparator.
+   * @brief Returns the minimum vertex using the provided comparator.
    *
-   * @tparam Comparator  Type of the comparator used for comparison.
-   * @param  comp        Comparator function.
+   * @tparam Comparator Type of the comparator used for comparison.
+   * @param comp Comparator function.
    */
   template <typename Comparator>
   Vertex
@@ -243,7 +243,7 @@ public:
   }
 
   /**
-   * @brief  Returns the number of edges in the graph.
+   * @brief Returns the number of edges in the graph.
    */
   size_t
   numEdges() const
@@ -252,7 +252,7 @@ public:
   }
 
   /**
-   * @brief  Returns an iterator provider for all the edges in the graph.
+   * @brief Returns an iterator provider for all the edges in the graph.
    */
   EdgeIteratorProvider<GraphType, VertexProperties, VertexIdType>
   edges() const
@@ -261,7 +261,7 @@ public:
   }
 
   /**
-   * @brief  Adds an edge between the two vertices, identified by their IDs.
+   * @brief Adds an edge between the two vertices, identified by their IDs.
    */
   void
   addEdge(
@@ -273,7 +273,7 @@ public:
   }
 
   /**
-   * @brief  Checks the existence of an edge between the given vertices.
+   * @brief Checks the existence of an edge between the given vertices.
    */
   bool
   edgeExists(
@@ -285,7 +285,7 @@ public:
   }
 
   /**
-   * @brief  Checks the existence of an edge between the given vertices, using their IDs.
+   * @brief Checks the existence of an edge between the given vertices, using their IDs.
    */
   bool
   edgeExists(
@@ -297,7 +297,7 @@ public:
   }
 
   /**
-   * @brief  Removes the given edge.
+   * @brief Removes the given edge.
    */
   void
   removeEdge(
@@ -308,7 +308,7 @@ public:
   }
 
   /**
-   * @brief  Removes the edge from u to v.
+   * @brief Removes the edge from u to v.
    */
   void
   removeEdge(
@@ -320,7 +320,7 @@ public:
   }
 
   /**
-   * @brief  Returns set of all the bidirected edges in the graph.
+   * @brief Returns set of all the bidirected edges in the graph.
    */
   std::unordered_set<Edge, typename Edge::Hash>
   getBidirectedEdges() const
@@ -335,7 +335,7 @@ public:
   }
 
   /**
-   * @brief  Checks if the graph has any cycles.
+   * @brief Checks if the graph has any cycles.
    */
   bool
   hasCycles() const
@@ -351,7 +351,7 @@ public:
   }
 
   /**
-   * @brief  Writes the graph, with VertexLabel property, to a Graphviz format dot file.
+   * @brief Writes the graph, with VertexLabel property, to a Graphviz format dot file.
    */
   EnableBoostAdjacencyList<GraphType, VertexLabel, VertexIdType>
   writeGraphviz(

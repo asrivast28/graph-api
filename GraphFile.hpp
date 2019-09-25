@@ -10,7 +10,7 @@
 #include <vector>
 
 /**
- * @brief  Enumeration class for different graph file types.
+ * @brief Enumeration class for different graph file types.
  */
 enum class GraphFileType {
   EDGE_LIST,
@@ -20,7 +20,7 @@ enum class GraphFileType {
 };
 
 /**
- * @brief  Class that provides the functionality for reading a graph file.
+ * @brief Class that provides the functionality for reading a graph file.
  *
  * @tparam FileType      The type of file to be read.
  * @tparam VertexIdType  Unsigned type for storing vertex ids.
@@ -46,22 +46,22 @@ private:\
 }
 
 /**
- * @brief  Partial specialization of GraphFile class for FileType = GraphFileType::EDGE_LIST.
+ * @brief Partial specialization of GraphFile class for FileType = GraphFileType::EDGE_LIST.
  */
 DECL_GRAPH_FILE(GraphFileType::EDGE_LIST);
 
 /**
- * @brief  Partial specialization of GraphFile class for FileType = GraphFileType::INCIDENCE_MATRIX.
+ * @brief Partial specialization of GraphFile class for FileType = GraphFileType::INCIDENCE_MATRIX.
  */
 DECL_GRAPH_FILE(GraphFileType::INCIDENCE_MATRIX);
 
 /**
- * @brief  Partial specialization of GraphFile class for FileType = GraphFileType::ARG_DATABASE.
+ * @brief Partial specialization of GraphFile class for FileType = GraphFileType::ARG_DATABASE.
  */
 DECL_GRAPH_FILE(GraphFileType::ARG_DATABASE);
 
 /**
- * @brief  Partial specialization of GraphFile class for FileType = GraphFileType::FHCP.
+ * @brief Partial specialization of GraphFile class for FileType = GraphFileType::FHCP.
  */
 DECL_GRAPH_FILE(GraphFileType::FHCP);
 

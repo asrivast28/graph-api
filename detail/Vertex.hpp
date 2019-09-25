@@ -7,7 +7,7 @@
 
 
 /**
- * @brief  Partial specialization of Vertex class for Boost graphs.
+ * @brief Partial specialization of Vertex class for Boost graphs.
  */
 template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType>
 class Vertex<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>> {
@@ -18,16 +18,16 @@ private:
 
 public:
   /**
-   * @brief  Iterator over vertices of the graph.
+   * @brief Iterator over vertices of the graph.
    */
   class Iterator : public std::iterator<std::forward_iterator_tag, Vertex>
   {
   public:
     /**
-     * @brief  Constructor for iterator over the vertices.
+     * @brief Constructor for iterator over the vertices.
      *
-     * @param graph     Instance of the graph implementation.
-     * @param vertices  Pair of begin and end iterator implementations over the vertices.
+     * @param graph Instance of the graph implementation.
+     * @param vertices Pair of begin and end iterator implementations over the vertices.
      */
     Iterator(
       const GraphImpl* const graph,
@@ -39,11 +39,10 @@ public:
     }
 
     /**
-     * @brief  Increments the iterator using the prefix increment iterator.
+     * @brief Increments the iterator using the prefix increment iterator.
      */
     Iterator&
-    operator++(
-    )
+    operator++()
     {
       if (m_current != m_end) {
         ++m_current;
@@ -52,7 +51,7 @@ public:
     }
 
     /**
-     * @brief  Increments the iterator using the postfix increment iterator.
+     * @brief Increments the iterator using the postfix increment iterator.
      */
     Iterator
     operator++(
@@ -65,7 +64,7 @@ public:
     }
 
     /**
-     * @brief  Checks if the iterator is same as another iterator.
+     * @brief Checks if the iterator is same as another iterator.
      */
     bool
     operator==(
@@ -76,7 +75,7 @@ public:
     }
 
     /**
-     * @brief  Checks if the iterator is NOT same as another iterator.
+     * @brief Checks if the iterator is NOT same as another iterator.
      */
     bool
     operator!=(
@@ -87,11 +86,10 @@ public:
     }
 
     /**
-     * @brief  Returns the vertex that the iterator is currently pointing to.
+     * @brief Returns the vertex that the iterator is currently pointing to.
      */
     Vertex
-    operator*(
-    ) const
+    operator*() const
     {
       return Vertex(m_graph, *m_current);
     }
@@ -104,19 +102,18 @@ public:
 
 public:
   /**
-   * @brief  Default constructor for the vertex wrapper.
+   * @brief Default constructor for the vertex wrapper.
    */
-  Vertex(
-  ) : m_graph(nullptr),
+  Vertex() : m_graph(nullptr),
       m_vertex(0)
   {
   }
 
   /**
-   * @brief  Constructor for the vertex wrapper.
+   * @brief Constructor for the vertex wrapper.
    *
-   * @param graph   Instance of the graph implementation.
-   * @param vertex  Instance of the vertex implementation.
+   * @param graph Instance of the graph implementation.
+   * @param vertex Instance of the vertex implementation.
    */
   Vertex(
     const GraphImpl* const graph,
@@ -127,7 +124,7 @@ public:
   }
 
   /**
-   * @brief  Returns the underlying vertex for this wrapper.
+   * @brief Returns the underlying vertex for this wrapper.
    */
   const VertexType&
   operator*() const
@@ -136,57 +133,52 @@ public:
   }
 
   /**
-   * @brief  Returns the id of this vertex.
+   * @brief Returns the properties of this vertex.
    */
   const VertexProperties&
-  properties(
-  ) const
+  properties() const
   {
     return (*m_graph)[m_vertex];
   }
 
   /**
-   * @brief  Returns the in degree of this vertex.
+   * @brief Returns the in degree of this vertex.
    */
   VertexIdType
-  inDegree(
-  ) const
+  inDegree() const
   {
     return boost::in_degree(m_vertex, *m_graph);
   }
 
   /**
-   * @brief  Returns an iterator provider over the edges incident on this vertex.
+   * @brief Returns an iterator provider over the edges incident on this vertex.
    */
   EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexProperties, VertexIdType>::InEdgeIterator>
-  inEdges(
-  ) const
+  inEdges() const
   {
     return EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexProperties, VertexIdType>::InEdgeIterator>(m_graph, boost::in_edges(m_vertex, *m_graph));
   }
 
   /**
-   * @brief  Returns the out degree of this vertex.
+   * @brief Returns the out degree of this vertex.
    */
   VertexIdType
-  outDegree(
-  ) const
+  outDegree() const
   {
     return boost::out_degree(m_vertex, *m_graph);
   }
 
   /**
-   * @brief  Returns an iterator provider over the outgoing edges from this vertex.
+   * @brief Returns an iterator provider over the outgoing edges from this vertex.
    */
   EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexProperties, VertexIdType>::OutEdgeIterator>
-  outEdges(
-  ) const
+  outEdges() const
   {
     return EdgeIteratorProvider<GraphType, VertexIdType, typename GraphType<VertexProperties, VertexIdType>::OutEdgeIterator>(m_graph, boost::out_edges(m_vertex, *m_graph));
   }
 
   /**
-   * @brief  Returns a provider for all the simple paths of a given length starting from this vertex.
+   * @brief Returns a provider for all the simple paths of a given length starting from this vertex.
    */
   SimplePathProvider<GraphType, VertexProperties, VertexIdType>
   simplePaths(
@@ -197,7 +189,7 @@ public:
   }
 
   /**
-   * @brief  Checks if this vertex has an edge to the given vertex.
+   * @brief Checks if this vertex has an edge to the given vertex.
    */
   bool
   hasEdgeTo(
@@ -213,7 +205,7 @@ private:
 }; // class Vertex<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>>
 
 /**
- * @brief  Partial specialization of VertexIteratorProvider class for Boost graphs.
+ * @brief Partial specialization of VertexIteratorProvider class for Boost graphs.
  */
 template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType>
 class VertexIteratorProvider<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>> {
@@ -222,9 +214,9 @@ private:
 
 public:
   /**
-   * @brief  Constructor for the vertex iterator provider.
+   * @brief Constructor for the vertex iterator provider.
    *
-   * @param graph  Instance of the graph implementation.
+   * @param graph Instance of the graph implementation.
    */
   VertexIteratorProvider(
     const typename GraphType<VertexProperties, VertexIdType>::Impl* const graph
@@ -233,21 +225,19 @@ public:
   }
 
   /**
-   * @brief  Returns the begin iterator over the vertices.
+   * @brief Returns the begin iterator over the vertices.
    */
   typename Vertex<GraphType, VertexProperties, VertexIdType>::Iterator
-  begin(
-  ) const
+  begin() const
   {
     return typename Vertex<GraphType, VertexProperties, VertexIdType>::Iterator(m_graph, boost::vertices(*m_graph));
   }
 
   /**
-   * @brief  Returns the end iterator over the vertices.
+   * @brief Returns the end iterator over the vertices.
    */
   typename Vertex<GraphType, VertexProperties, VertexIdType>::Iterator
-  end(
-  ) const
+  end() const
   {
     IteratorType end = boost::vertices(*m_graph).second;
     return typename Vertex<GraphType, VertexProperties, VertexIdType>::Iterator(m_graph, std::make_pair(end, end));

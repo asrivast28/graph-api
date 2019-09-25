@@ -7,7 +7,7 @@
 
 
 /**
- * @brief  Partial specialization of SimplePathProvider class for Boost graphs.
+ * @brief Partial specialization of SimplePathProvider class for Boost graphs.
  */
 template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType>
 class SimplePathProvider<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>> {
@@ -17,10 +17,10 @@ private:
 
 public:
   /**
-   * @brief  Constructs the provider for paths starting from a path.
+   * @brief Constructs the provider for paths starting from a path.
    *
-   * @param s  Source vertex for all the simple paths.
-   * @param l  Length of all the simple paths.
+   * @param s Source vertex for all the simple paths.
+   * @param l Length of all the simple paths.
    */
   SimplePathProvider(
     const Vertex& s,
@@ -38,7 +38,7 @@ public:
   /**
    * @brief Returns the next simple path after pruning.
    *
-   * @param pruner  Function which returns true if a path is to be pruned.
+   * @param pruner Function which returns true if a path is to be pruned.
    */
   template <typename PrunerType>
   std::vector<VertexIdType>
@@ -81,8 +81,7 @@ public:
    * @brief Returns the next simple path without any pruning.
    */
   std::vector<VertexIdType>
-  next(
-  )
+  next()
   {
     return this->next([] (const std::vector<VertexIdType>&) { return false; });
   }
