@@ -5,10 +5,11 @@
 #ifndef DETAIL_GRAPH_HPP_
 #define DETAIL_GRAPH_HPP_
 
-#include <boost/graph/copy.hpp>
 #include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/strong_components.hpp>
+#include <boost/graph/topological_sort.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
 
@@ -111,6 +112,49 @@ public:
   using VertexType = typename GraphType<Arg, VertexIdType>::VertexType;
   using EdgeType = typename GraphType<Arg, VertexIdType>::EdgeType;
 
+private:
+  /**
+    * @brief Helper class that implements the bidirected edge filter functionality.
+   */
+  class BidrectedEdgeFilter {
+  public:
+    BidrectedEdgeFilter(
+    ) : m_graph(nullptr),
+        m_directed(true)
+    {
+    }
+
+    BidrectedEdgeFilter(
+      const GraphImpl& g,
+      const bool filterBidirected = true
+    ) : m_graph(&g),
+        m_directed(filterBidirected)
+    {
+    }
+
+    bool
+    bidirectedEdge(
+      const EdgeType& e
+    ) const
+    {
+      auto source = boost::source(e, *m_graph);
+      auto target = boost::target(e, *m_graph);
+      return boost::edge(target, source, *m_graph).second;
+    }
+
+    bool
+    operator()(
+      const EdgeType& e
+    ) const
+    {
+      return m_directed ^ bidirectedEdge(e);
+    }
+
+  private:
+    const GraphImpl* m_graph;
+    bool m_directed;
+  }; // class BidrectedEdgeFilter
+
 public:
   /**
    * @brief Constructor that reads graph in edge list format from the given file and builds the in-memory graph.
@@ -159,14 +203,17 @@ public:
   }
 
   /**
-   * @brief Copy constructor.
+   * @brief Constructs the object from an already created implementation and map.
+   *
+   * @param g The given implementation of the graph.
+   * @param idVertexMap The given id to vertex map.
    */
   Graph(
-    const Graph& other
-  ) : m_graph(),
-      m_idVertexMap(other.m_idVertexMap)
+    GraphImpl&& g,
+    const std::unordered_map<VertexIdType, typename GraphType<Arg, VertexIdType>::VertexType>& idVertexMap
+  ) : m_graph(g),
+      m_idVertexMap(idVertexMap)
   {
-    boost::copy_graph(other.m_graph, m_graph);
   }
 
   /**
@@ -333,6 +380,28 @@ public:
       }
     }
     return bidirected;
+  }
+
+  /**
+   * @brief Returns a filtered view of the current graph with the bidirected edges removed.
+   */
+  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, BidrectedEdgeFilter>, VertexIdType>
+  filterBidirectedEdges() const
+  {
+    BidrectedEdgeFilter bef(m_graph);
+    boost::filtered_graph<decltype(m_graph), BidrectedEdgeFilter> fg(m_graph, bef);
+    return Graph<GenericBoostGraph, decltype(fg), VertexIdType>(std::move(fg), m_idVertexMap);
+  }
+
+  /**
+   * @brief Returns a filtered view of the current graph with the directed edges removed.
+   */
+  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, BidrectedEdgeFilter>, VertexIdType>
+  filterDirectedEdges() const
+  {
+    BidrectedEdgeFilter bef(m_graph, false);
+    boost::filtered_graph<decltype(m_graph), BidrectedEdgeFilter> fg(m_graph, bef);
+    return Graph<GenericBoostGraph, decltype(fg), VertexIdType>(std::move(fg), m_idVertexMap);
   }
 
   /**
