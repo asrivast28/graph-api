@@ -114,6 +114,29 @@ public:
 
 private:
   /**
+   * @brief Helper class for detecting cycles using DFSVisit.
+   */
+  class CycleDetector : public boost::default_dfs_visitor {
+  public:
+    CycleDetector(
+      bool& hasCycles
+    ) : m_hasCycles(hasCycles) { }
+
+    void
+    back_edge(
+      const EdgeType,
+      const GraphImpl&
+    )
+    {
+      m_hasCycles = true;
+    }
+
+  private:
+    bool& m_hasCycles;
+  };
+
+private:
+  /**
     * @brief Helper class that implements the bidirected edge filter functionality.
    */
   class BidrectedEdgeFilter {
@@ -411,12 +434,27 @@ public:
   hasCycles() const
   {
     bool hasCycles = false;
-    std::unordered_map<VertexType, size_t> components;
-    boost::associative_property_map<decltype(components)> componentMap(components);
-    auto numComponents = boost::strong_components(m_graph, componentMap);
-    if (numComponents < numVertices()) {
-      hasCycles = true;
-    }
+    CycleDetector cd(hasCycles);
+    boost::depth_first_search(m_graph, boost::visitor(cd));
+    return hasCycles;
+  }
+
+  /**
+   * @brief Checks if the source is part of any cycles in the graph.
+   */
+  bool
+  hasCycles(
+    const VertexType source
+  ) const
+  {
+    bool hasCycles = false;
+    CycleDetector cd(hasCycles);
+    // Color map is required for depth_first_visit
+    auto indexMap = boost::get(boost::vertex_index, m_graph);
+    auto colorMap = boost::make_vector_property_map<boost::default_color_type>(indexMap);
+    // Terminate as soon as a cycle is found
+    auto terminateFunc = [&hasCycles] (const VertexType, const GraphImpl&) { return hasCycles; };
+    boost::depth_first_visit(m_graph, source, cd, colorMap, terminateFunc);
     return hasCycles;
   }
 
