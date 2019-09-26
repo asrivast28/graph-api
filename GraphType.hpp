@@ -23,6 +23,7 @@ struct GraphTraits {
   using VertexIdType = void;
 
   using VertexType = void;
+  using VertexProperty = void;
   using VertexIterator = void;
   using EdgeType = void;
   using EdgeIterator = void;
@@ -42,7 +43,8 @@ struct GraphTraits<BoostGraph, UnsignedType> {
   using VertexIdType = UnsignedType;
 
   using VertexType = typename boost::graph_traits<BoostGraph>::vertex_descriptor;
-  using VertexIterator = typename boost::graph_traits<BoostGraph>::vertex_iterator ;
+  using VertexProperty = typename boost::vertex_property<BoostGraph>::type;
+  using VertexIterator = typename boost::graph_traits<BoostGraph>::vertex_iterator;
   using EdgeType = typename boost::graph_traits<BoostGraph>::edge_descriptor;
   using EdgeIterator = typename boost::graph_traits<BoostGraph>::edge_iterator;
   using InEdgeIterator = typename boost::graph_traits<BoostGraph>::in_edge_iterator;
@@ -74,29 +76,36 @@ template <typename VertexProperties, typename UnsignedType>
 using DirectedCSRGraph = GraphTraits<boost::compressed_sparse_row_graph<boost::directedS, VertexProperties, boost::no_property, boost::no_property, UnsignedType, size_t>, UnsignedType>;
 
 /**
+ * @brief Any generic boost graph type.
+ */
+template <typename GraphImpl, typename UnsignedType>
+using GenericBoostGraph = GraphTraits<GraphImpl, UnsignedType>;
+
+/**
  * @brief Used for enabling a template only for boost adjacency list graph type.
  */
-template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType, typename ReturnType = void>
-using EnableBoostAdjacencyList = typename std::enable_if<std::is_same<GraphType<VertexProperties, VertexIdType>, UndirectedAdjacencyList<VertexProperties, VertexIdType>>::value |
-                                                         std::is_same<GraphType<VertexProperties, VertexIdType>, BidirectionalAdjacencyList<VertexProperties, VertexIdType>>::value |
-                                                         std::is_same<GraphType<VertexProperties, VertexIdType>, DirectedAdjacencyList<VertexProperties, VertexIdType>>::value,
+template <template <typename, typename> class GraphType, typename Arg, typename VertexIdType, typename ReturnType = void>
+using EnableBoostAdjacencyList = typename std::enable_if<std::is_same<GraphType<Arg, VertexIdType>, UndirectedAdjacencyList<Arg, VertexIdType>>::value |
+                                                         std::is_same<GraphType<Arg, VertexIdType>, BidirectionalAdjacencyList<Arg, VertexIdType>>::value |
+                                                         std::is_same<GraphType<Arg, VertexIdType>, DirectedAdjacencyList<Arg, VertexIdType>>::value,
                                                          ReturnType
                                                         >::type;
 
 /**
  * @brief Used for enabling a template only for boost CSR graph type.
  */
-template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType, typename ReturnType = void>
-using EnableBoostCSR = typename std::enable_if<std::is_same<GraphType<VertexProperties, VertexIdType>, DirectedCSRGraph<VertexProperties, VertexIdType>>::value, ReturnType>::type;
+template <template <typename, typename> class GraphType, typename Arg, typename VertexIdType, typename ReturnType = void>
+using EnableBoostCSR = typename std::enable_if<std::is_same<GraphType<Arg, VertexIdType>, DirectedCSRGraph<Arg, VertexIdType>>::value, ReturnType>::type;
 
 /**
  * @brief Used for enabling a template for all boost graph types.
  */
-template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType, typename ReturnType = void>
-using EnableBoostAll = typename std::enable_if<std::is_same<GraphType<VertexProperties, VertexIdType>, UndirectedAdjacencyList<VertexProperties, VertexIdType>>::value |
-                                               std::is_same<GraphType<VertexProperties, VertexIdType>, BidirectionalAdjacencyList<VertexProperties, VertexIdType>>::value |
-                                               std::is_same<GraphType<VertexProperties, VertexIdType>, DirectedAdjacencyList<VertexProperties, VertexIdType>>::value |
-                                               std::is_same<GraphType<VertexProperties, VertexIdType>, DirectedCSRGraph<VertexProperties, VertexIdType>>::value,
+template <template <typename, typename> class GraphType, typename Arg, typename VertexIdType, typename ReturnType = void>
+using EnableBoostAll = typename std::enable_if<std::is_same<GraphType<Arg, VertexIdType>, UndirectedAdjacencyList<Arg, VertexIdType>>::value |
+                                               std::is_same<GraphType<Arg, VertexIdType>, BidirectionalAdjacencyList<Arg, VertexIdType>>::value |
+                                               std::is_same<GraphType<Arg, VertexIdType>, DirectedAdjacencyList<Arg, VertexIdType>>::value |
+                                               std::is_same<GraphType<Arg, VertexIdType>, DirectedCSRGraph<Arg, VertexIdType>>::value |
+                                               std::is_same<GraphType<Arg, VertexIdType>, GenericBoostGraph<Arg, VertexIdType>>::value,
                                                ReturnType>::type;
 
 #endif // GRAPHTYPE_HPP_

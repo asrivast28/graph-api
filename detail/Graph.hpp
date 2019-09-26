@@ -102,13 +102,14 @@ construct(
 /**
  * @brief Partial specialization of Graph class for Boost graphs.
  */
-template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType>
-class Graph<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>> {
+template <template <typename, typename> class GraphType, typename Arg, typename VertexIdType>
+class Graph<GraphType, Arg, VertexIdType, EnableBoostAll<GraphType, Arg, VertexIdType>> {
 public:
-  using Vertex = typename ::Vertex<GraphType, VertexProperties, VertexIdType>;
-  using Edge = typename ::Edge<GraphType, VertexProperties, VertexIdType>;
-  using VertexType = typename GraphType<VertexProperties, VertexIdType>::VertexType;
-  using EdgeType = typename GraphType<VertexProperties, VertexIdType>::EdgeType;
+  using Vertex = typename ::Vertex<GraphType, Arg, VertexIdType>;
+  using Edge = typename ::Edge<GraphType, Arg, VertexIdType>;
+  using GraphImpl = typename GraphType<Arg, VertexIdType>::Impl;
+  using VertexType = typename GraphType<Arg, VertexIdType>::VertexType;
+  using EdgeType = typename GraphType<Arg, VertexIdType>::EdgeType;
 
 public:
   /**
@@ -199,10 +200,10 @@ public:
   /**
    * @brief Returns an iterator provider for all the vertices in the graph.
    */
-  VertexIteratorProvider<GraphType, VertexProperties, VertexIdType>
+  VertexIteratorProvider<GraphType, Arg, VertexIdType>
   vertices() const
   {
-    return VertexIteratorProvider<GraphType, VertexProperties, VertexIdType>(&m_graph);
+    return VertexIteratorProvider<GraphType, Arg, VertexIdType>(&m_graph);
   }
 
   /**
@@ -217,7 +218,7 @@ public:
     Comparator&& comp
   ) const
   {
-    using VertexType = typename GraphType<VertexProperties, VertexIdType>::VertexType;
+    using VertexType = typename GraphType<Arg, VertexIdType>::VertexType;
     std::vector<Vertex> vertices(boost::num_vertices(m_graph));
     std::transform(boost::vertices(m_graph).first, boost::vertices(m_graph).second, vertices.begin(), [this](const VertexType& u) { return Vertex(&m_graph, u); });
     std::sort(vertices.begin(), vertices.end(), comp);
@@ -236,7 +237,7 @@ public:
     Comparator&& comp
   ) const
   {
-    using VertexType = typename GraphType<VertexProperties, VertexIdType>::VertexType;
+    using VertexType = typename GraphType<Arg, VertexIdType>::VertexType;
     std::vector<Vertex> vertices(boost::num_vertices(m_graph));
     std::transform(boost::vertices(m_graph).first, boost::vertices(m_graph).second, vertices.begin(), [this](const VertexType& u) { return Vertex(&m_graph, u); });
     return *(std::min_element(vertices.begin(), vertices.end(), comp));
@@ -254,10 +255,10 @@ public:
   /**
    * @brief Returns an iterator provider for all the edges in the graph.
    */
-  EdgeIteratorProvider<GraphType, VertexProperties, VertexIdType>
+  EdgeIteratorProvider<GraphType, Arg, VertexIdType>
   edges() const
   {
-    return EdgeIteratorProvider<GraphType, VertexProperties, VertexIdType>(&m_graph, boost::edges(m_graph));
+    return EdgeIteratorProvider<GraphType, Arg, VertexIdType>(&m_graph, boost::edges(m_graph));
   }
 
   /**
@@ -265,11 +266,11 @@ public:
    */
   void
   addEdge(
-    const VertexIdType u,
-    const VertexIdType v
+    const VertexIdType source,
+    const VertexIdType target
   )
   {
-    boost::add_edge(m_idVertexMap.at(u), m_idVertexMap.at(v), m_graph);
+    boost::add_edge(m_idVertexMap.at(source), m_idVertexMap.at(target), m_graph);
   }
 
   /**
@@ -277,11 +278,11 @@ public:
    */
   bool
   edgeExists(
-    const Vertex& u,
-    const Vertex& v
+    const Vertex& source,
+    const Vertex& target
   ) const
   {
-    return u.hasEdgeTo(v);
+    return source.hasEdgeTo(target);
   }
 
   /**
@@ -289,11 +290,11 @@ public:
    */
   bool
   edgeExists(
-    const VertexIdType u,
-    const VertexIdType v
+    const VertexIdType source,
+    const VertexIdType target
   ) const
   {
-    return boost::edge(m_idVertexMap.at(u), m_idVertexMap.at(v), m_graph).second;
+    return boost::edge(m_idVertexMap.at(source), m_idVertexMap.at(target), m_graph).second;
   }
 
   /**
@@ -308,15 +309,15 @@ public:
   }
 
   /**
-   * @brief Removes the edge from u to v.
+   * @brief Removes the edge from source to target.
    */
   void
   removeEdge(
-    const VertexType u,
-    const VertexType v
+    const VertexType source,
+    const VertexType target
   )
   {
-    boost::remove_edge(u, v, m_graph);
+    boost::remove_edge(source, target, m_graph);
   }
 
   /**
@@ -364,13 +365,17 @@ public:
     boost::write_graphviz(stream, m_graph, vertex_label_writer, boost::default_writer(), graph_property_writer);
   }
 
+  /**
+   * @brief Destructor.
+   */
   ~Graph()
   {
   }
 
 private:
-  typename GraphType<VertexProperties, VertexIdType>::Impl m_graph;
-  std::unordered_map<VertexIdType, typename GraphType<VertexProperties, VertexIdType>::VertexType> m_idVertexMap;
-}; // class Graph<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>>
+  GraphImpl m_graph;
+  std::unordered_map<VertexIdType, typename GraphType<Arg, VertexIdType>::VertexType> m_idVertexMap;
+}; // class Graph<GraphType, Arg, VertexIdType, EnableBoostAll<GraphType, Arg, VertexIdType>>
+
 
 #endif // DETAIL_GRAPH_HPP_

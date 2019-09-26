@@ -9,11 +9,11 @@
 /**
  * @brief Partial specialization of SimplePathProvider class for Boost graphs.
  */
-template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType>
-class SimplePathProvider<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>> {
+template <template <typename, typename> class GraphType, typename Arg, typename VertexIdType>
+class SimplePathProvider<GraphType, Arg, VertexIdType, EnableBoostAll<GraphType, Arg, VertexIdType>> {
 private:
-  using Vertex = typename ::Vertex<GraphType, VertexProperties, VertexIdType>;
-  using OutEdgeIterator = typename ::Edge<GraphType, VertexProperties, VertexIdType>::OutEdgeIterator;
+  using Vertex = typename ::Vertex<GraphType, Arg, VertexIdType>;
+  using OutEdgeIterator = typename ::Edge<GraphType, Arg, VertexIdType>::OutEdgeIterator;
 
 public:
   /**
@@ -26,7 +26,7 @@ public:
     const Vertex& s,
     const VertexIdType& l
   ) : m_stack(),
-      m_visited(1, s.properties().id),
+      m_visited(1, s.property().id),
       m_pathLength(l)
   {
     if (m_pathLength > 0) {
@@ -55,8 +55,8 @@ public:
       else {
         Vertex child = (*(children.first++)).target();
         if (m_visited.size() < m_pathLength) {
-          if (std::find(m_visited.begin(), m_visited.end(), child.properties().id) == m_visited.end()) {
-            m_visited.push_back(child.properties().id);
+          if (std::find(m_visited.begin(), m_visited.end(), child.property().id) == m_visited.end()) {
+            m_visited.push_back(child.property().id);
             auto outEdgeIt = child.outEdges();
             m_stack.push_back(std::make_pair(outEdgeIt.begin(), outEdgeIt.end()));
           }
@@ -90,6 +90,6 @@ private:
   std::vector<std::pair<OutEdgeIterator, OutEdgeIterator>> m_stack;
   std::vector<VertexIdType> m_visited;
   const VertexIdType m_pathLength;
-}; // class SimplePathProvider<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>>
+}; // class SimplePathProvider<GraphType, Arg, VertexIdType, EnableBoostAll<GraphType, Arg, VertexIdType>>
 
 #endif // DETAIL_SIMPLEPATHPROVIDER_HPP_

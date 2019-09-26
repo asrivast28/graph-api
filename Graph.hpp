@@ -18,10 +18,10 @@
  * @brief Class that provides graph functionality.
  *
  * @tparam GraphType Type of the graph implementation.
- * @tparam VertexProperties Type of the vertex properties.
+ * @tparam Arg Type of the first argument to the graph implementation template.
  * @tparam VertexIdType Unsigned type for storing vertex ids.
  */
-template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType, typename Enable = void>
+template <template <typename, typename> class GraphType, typename Arg, typename VertexIdType, typename Enable = void>
 class Graph;
 
 
@@ -35,6 +35,9 @@ struct VertexInfo {
   UnsignedType id;
 };
 
+/**
+ * @brief Struct used for providing bundled vertex labels.
+ */
 struct VertexLabel {
   std::string label;
 };

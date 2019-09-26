@@ -13,11 +13,11 @@
 /**
  * @brief Partial specialization of Edge class for Boost graphs.
  */
-template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType>
-class Edge<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>> {
+template <template <typename, typename> class GraphType, typename Arg, typename VertexIdType>
+class Edge<GraphType, Arg, VertexIdType, EnableBoostAll<GraphType, Arg, VertexIdType>> {
 private:
-  using GraphImpl = typename GraphType<VertexProperties, VertexIdType>::Impl;
-  using EdgeType = typename GraphType<VertexProperties, VertexIdType>::EdgeType;
+  using GraphImpl = typename GraphType<Arg, VertexIdType>::Impl;
+  using EdgeType = typename GraphType<Arg, VertexIdType>::EdgeType;
 
 public:
   /**
@@ -98,7 +98,7 @@ public:
     Edge
     operator*() const
     {
-      return Edge<GraphType, VertexProperties, VertexIdType>(m_graph, *m_current);
+      return Edge<GraphType, Arg, VertexIdType>(m_graph, *m_current);
     }
 
   private:
@@ -108,13 +108,13 @@ public:
   }; // class Iterator
 
 public:
-  using EdgeIterator = Iterator<typename GraphType<VertexProperties, VertexIdType>::EdgeIterator>;
-  using OutEdgeIterator = Iterator<typename GraphType<VertexProperties, VertexIdType>::OutEdgeIterator>;
-  using InEdgeIterator = Iterator<typename GraphType<VertexProperties, VertexIdType>::InEdgeIterator>;
+  using EdgeIterator = Iterator<typename GraphType<Arg, VertexIdType>::EdgeIterator>;
+  using OutEdgeIterator = Iterator<typename GraphType<Arg, VertexIdType>::OutEdgeIterator>;
+  using InEdgeIterator = Iterator<typename GraphType<Arg, VertexIdType>::InEdgeIterator>;
 
 public:
   /**
-   * @brief Constructor for the edge wrapper.
+   * @brief Move constructor for the edge wrapper.
    *
    * @param graph Instance of the graph implementation.
    * @param edge Instance of the edge implementation.
@@ -138,29 +138,32 @@ public:
 
   /**
    * @brief Compares this edge with another edge.
+   *        Assumes that the underlying graph is the same.
    */
   bool
-  operator==(const Edge& other) const
+  operator==(
+    const Edge& other
+  ) const
   {
-    return (m_graph == other.m_graph) && (m_edge == other.m_edge);
+    return m_edge == other.m_edge;
   }
 
   /**
    * @brief Returns the source vertex of this edge.
    */
-  typename ::Vertex<GraphType, VertexProperties, VertexIdType>
+  typename ::Vertex<GraphType, Arg, VertexIdType>
   source() const
   {
-    return typename ::Vertex<GraphType, VertexProperties, VertexIdType>(m_graph, boost::source(m_edge, *m_graph));
+    return typename ::Vertex<GraphType, Arg, VertexIdType>(m_graph, boost::source(m_edge, *m_graph));
   }
 
   /**
    * @brief Returns the target vertex of this edge.
    */
-  typename ::Vertex<GraphType, VertexProperties, VertexIdType>
+  typename ::Vertex<GraphType, Arg, VertexIdType>
   target() const
   {
-    return typename ::Vertex<GraphType, VertexProperties, VertexIdType>(m_graph, boost::target(m_edge, *m_graph));
+    return typename ::Vertex<GraphType, Arg, VertexIdType>(m_graph, boost::target(m_edge, *m_graph));
   }
 
 public:
@@ -169,7 +172,7 @@ public:
    */
   class Hash {
   public:
-    using VertexType = typename GraphType<VertexProperties, VertexIdType>::VertexType;
+    using VertexType = typename GraphType<Arg, VertexIdType>::VertexType;
 
   public:
     Hash()
@@ -193,14 +196,14 @@ public:
 private:
   const GraphImpl* m_graph;
   EdgeType m_edge;
-}; // class Edge<GraphType, VertexProperties, VertexIdType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>>
+}; // class Edge<GraphType, Arg, VertexIdType, EnableBoostAll<GraphType, Arg, VertexIdType>>
 
 
 /**
  * @brief Partial specialization of EdgeIteratorProvider class for Boost graphs.
  */
-template <template <typename, typename> class GraphType, typename VertexProperties, typename VertexIdType, typename IteratorType>
-class EdgeIteratorProvider<GraphType, VertexProperties, VertexIdType, IteratorType, EnableBoostAll<GraphType, VertexProperties, VertexIdType>> {
+template <template <typename, typename> class GraphType, typename Arg, typename VertexIdType, typename IteratorType>
+class EdgeIteratorProvider<GraphType, Arg, VertexIdType, IteratorType, EnableBoostAll<GraphType, Arg, VertexIdType>> {
 public:
   /**
    * @brief Constructor for the edge iterator provider.
@@ -209,7 +212,7 @@ public:
    * @param edges Pair of begin and end iterator implementations over the edges.
    */
   EdgeIteratorProvider(
-    const typename GraphType<VertexProperties, VertexIdType>::Impl* const graph,
+    const typename GraphType<Arg, VertexIdType>::Impl* const graph,
     const std::pair<IteratorType, IteratorType>& edges
   ) : m_graph(graph),
       m_edges(edges)
@@ -219,25 +222,25 @@ public:
   /**
    * @brief Returns the begin iterator over the edges.
    */
-  typename Edge<GraphType, VertexProperties, VertexIdType>::template Iterator<IteratorType>
+  typename Edge<GraphType, Arg, VertexIdType>::template Iterator<IteratorType>
   begin() const
   {
-    return typename Edge<GraphType, VertexProperties, VertexIdType>::template Iterator<IteratorType>(m_graph, m_edges);
+    return typename Edge<GraphType, Arg, VertexIdType>::template Iterator<IteratorType>(m_graph, m_edges);
   }
 
   /**
    * @brief Returns the end iterator over the edges.
    */
-  typename Edge<GraphType, VertexProperties, VertexIdType>::template Iterator<IteratorType>
+  typename Edge<GraphType, Arg, VertexIdType>::template Iterator<IteratorType>
   end() const
   {
     IteratorType end = m_edges.second;
-    return typename Edge<GraphType, VertexProperties, VertexIdType>::template Iterator<IteratorType>(m_graph, std::make_pair(end, end));
+    return typename Edge<GraphType, Arg, VertexIdType>::template Iterator<IteratorType>(m_graph, std::make_pair(end, end));
   }
 
 private:
-  const typename GraphType<VertexProperties, VertexIdType>::Impl* m_graph;
+  const typename GraphType<Arg, VertexIdType>::Impl* m_graph;
   std::pair<IteratorType, IteratorType> m_edges;
-}; // class EdgeIteratorProvider<GraphType, VertexProperties, VertexIdType, IteratorType, BoostEnable<GraphType, VertexProperties, VertexIdType>>
+}; // class EdgeIteratorProvider<GraphType, Arg, VertexIdType, IteratorType, BoostEnable<GraphType, Arg, VertexIdType>>
 
 #endif // DETAIL_EDGE_HPP_
