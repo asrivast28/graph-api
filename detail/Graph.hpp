@@ -273,7 +273,7 @@ public:
   VertexIteratorProvider<GraphType, Arg, VertexIdType>
   vertices() const
   {
-    return VertexIteratorProvider<GraphType, Arg, VertexIdType>(&m_graph);
+    return VertexIteratorProvider<GraphType, Arg, VertexIdType>(&m_graph, boost::vertices(m_graph));
   }
 
   /**

@@ -25,6 +25,7 @@ struct GraphTraits {
   using VertexType = void;
   using VertexProperty = void;
   using VertexIterator = void;
+  using AdjacencyIterator = void;
   using EdgeType = void;
   using EdgeIterator = void;
   using InEdgeIterator = void;
@@ -45,6 +46,7 @@ struct GraphTraits<BoostGraph, UnsignedType> {
   using VertexType = typename boost::graph_traits<BoostGraph>::vertex_descriptor;
   using VertexProperty = typename boost::vertex_property<BoostGraph>::type;
   using VertexIterator = typename boost::graph_traits<BoostGraph>::vertex_iterator;
+  using AdjacencyIterator = typename boost::graph_traits<BoostGraph>::adjacency_iterator;
   using EdgeType = typename boost::graph_traits<BoostGraph>::edge_descriptor;
   using EdgeIterator = typename boost::graph_traits<BoostGraph>::edge_iterator;
   using InEdgeIterator = typename boost::graph_traits<BoostGraph>::in_edge_iterator;

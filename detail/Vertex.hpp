@@ -14,12 +14,14 @@ class Vertex<GraphType, Arg, VertexIdType, EnableBoostAll<GraphType, Arg, Vertex
 private:
   using GraphImpl = typename GraphType<Arg, VertexIdType>::Impl;
   using VertexType = typename GraphType<Arg, VertexIdType>::VertexType;
-  using IteratorType = typename GraphType<Arg, VertexIdType>::VertexIterator;
 
 public:
   /**
    * @brief Iterator over vertices of the graph.
-   */
+  *
+  * @tparam IteratorType Type of the edge iterator.
+  */
+  template <typename IteratorType>
   class Iterator : public std::iterator<std::forward_iterator_tag, Vertex>
   {
   public:
@@ -190,6 +192,15 @@ public:
   }
 
   /**
+   * @brief Returns an iterator provider over the vertices which are target of outgoing edges from this vertex.
+   */
+  VertexIteratorProvider<GraphType, Arg, VertexIdType, typename GraphType<Arg, VertexIdType>::AdjacencyIterator>
+  targetVertices() const
+  {
+    return VertexIteratorProvider<GraphType, Arg, VertexIdType, typename GraphType<Arg, VertexIdType>::AdjacencyIterator>(m_graph, boost::adjacent_vertices(m_vertex, *m_graph));
+  }
+
+  /**
    * @brief Returns a provider for all the simple paths of a given length starting from this vertex.
    */
   SimplePathProvider<GraphType, Arg, VertexIdType>
@@ -219,11 +230,8 @@ private:
 /**
  * @brief Partial specialization of VertexIteratorProvider class for Boost graphs.
  */
-template <template <typename, typename> class GraphType, typename Arg, typename VertexIdType>
-class VertexIteratorProvider<GraphType, Arg, VertexIdType, EnableBoostAll<GraphType, Arg, VertexIdType>> {
-private:
-  using IteratorType = typename GraphType<Arg, VertexIdType>::VertexIterator;
-
+template <template <typename, typename> class GraphType, typename Arg, typename VertexIdType, typename IteratorType>
+class VertexIteratorProvider<GraphType, Arg, VertexIdType, IteratorType, EnableBoostAll<GraphType, Arg, VertexIdType>> {
 public:
   /**
    * @brief Constructor for the vertex iterator provider.
@@ -231,32 +239,35 @@ public:
    * @param graph Instance of the graph implementation.
    */
   VertexIteratorProvider(
-    const typename GraphType<Arg, VertexIdType>::Impl* const graph
-  ) : m_graph(graph)
+    const typename GraphType<Arg, VertexIdType>::Impl* const graph,
+    const std::pair<IteratorType, IteratorType>& vertices
+  ) : m_graph(graph),
+      m_vertices(vertices)
   {
   }
 
   /**
    * @brief Returns the begin iterator over the vertices.
    */
-  typename Vertex<GraphType, Arg, VertexIdType>::Iterator
+  typename Vertex<GraphType, Arg, VertexIdType>::template Iterator<IteratorType>
   begin() const
   {
-    return typename Vertex<GraphType, Arg, VertexIdType>::Iterator(m_graph, boost::vertices(*m_graph));
+    return typename Vertex<GraphType, Arg, VertexIdType>::template Iterator<IteratorType>(m_graph, m_vertices);
   }
 
   /**
    * @brief Returns the end iterator over the vertices.
    */
-  typename Vertex<GraphType, Arg, VertexIdType>::Iterator
+  typename Vertex<GraphType, Arg, VertexIdType>::template Iterator<IteratorType>
   end() const
   {
-    IteratorType end = boost::vertices(*m_graph).second;
-    return typename Vertex<GraphType, Arg, VertexIdType>::Iterator(m_graph, std::make_pair(end, end));
+    IteratorType end = m_vertices.second;
+    return typename Vertex<GraphType, Arg, VertexIdType>::template Iterator<IteratorType>(m_graph, std::make_pair(end, end));
   }
 
 private:
   const typename GraphType<Arg, VertexIdType>::Impl* m_graph;
-}; // class VertexIteratorProvider<GraphType, VertexIdType, EnableBoostAll<GraphType, Arg, VertexIdType>>
+  std::pair<IteratorType, IteratorType> m_vertices;
+}; // class VertexIteratorProvider<GraphType, Arg, VertexIdType, IteratorType, EnableBoostAll<GraphType, Arg, VertexIdType>>
 
 #endif // DETAIL_VERTEX_HPP_
