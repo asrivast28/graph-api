@@ -149,6 +149,17 @@ public:
   }
 
   /**
+   * @brief Compares the vertex descriptor of this vertex with the other.
+   */
+  bool
+  operator<(
+    const Vertex& other
+  ) const
+  {
+    return m_vertex < other.m_vertex;
+  }
+
+  /**
    * @brief Compares this vertex with another vertex.
    *        Assumes that the underlying graph is the same.
    */

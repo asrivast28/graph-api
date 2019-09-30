@@ -163,6 +163,18 @@ public:
   }
 
   /**
+   * @brief Partial ordering of the edges, using the vertex ordering.
+   */
+  bool
+  operator<(
+    const Edge& other
+  ) const
+  {
+      return (source() < other.source()) ||
+            ((source() == other.source()) && (target() < other.target()));
+  }
+
+  /**
    * @brief Returns the source vertex of this edge.
    */
   typename ::Vertex<GraphType, Arg, VertexIdType>

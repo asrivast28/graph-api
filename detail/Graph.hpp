@@ -8,12 +8,11 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graphviz.hpp>
-#include <boost/graph/strong_components.hpp>
-#include <boost/graph/topological_sort.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
 
 #include <fstream>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
 #include <map>
@@ -442,10 +441,10 @@ public:
   /**
    * @brief Returns set of all the bidirected edges in the graph.
    */
-  std::unordered_set<Edge, typename Edge::Hash>
+  std::set<Edge>
   bidirectedEdges() const
   {
-    std::unordered_set<Edge, typename Edge::Hash> bidirected;
+    std::set<Edge> bidirected;
     for (auto e: edges()) {
       if (edgeExists(e.target(), e.source())) {
         bidirected.insert(e);
