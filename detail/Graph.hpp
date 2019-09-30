@@ -242,11 +242,12 @@ public:
   /**
    * @brief Move constructor.
    */
-  Graph(
-    Graph&& other
-  ) : m_graph(other.m_graph),
-      m_idVertexMap(std::move(other.m_idVertexMap))
+  Vertex
+  wrap(
+    const VertexType v
+  )
   {
+    return Vertex(&m_graph, v);
   }
 
   /**
@@ -336,6 +337,30 @@ public:
    */
   void
   addEdge(
+    const Vertex& source,
+    const Vertex& target
+  )
+  {
+    boost::add_edge(*source, *target, m_graph);
+  }
+
+  /**
+   * @brief Adds an edge between the two vertices.
+   */
+  void
+  addEdge(
+    const VertexType source,
+    const VertexType target
+  )
+  {
+    boost::add_edge(source, target, m_graph);
+  }
+
+  /**
+   * @brief Adds an edge between the two vertices, identified by their IDs.
+   */
+  void
+  addEdge(
     const VertexIdType source,
     const VertexIdType target
   )
@@ -360,6 +385,18 @@ public:
    */
   bool
   edgeExists(
+    const VertexType source,
+    const VertexType target
+  ) const
+  {
+    return boost::edge(source, target, m_graph).second;
+  }
+
+  /**
+   * @brief Checks the existence of an edge between the given vertices, using their IDs.
+   */
+  bool
+  edgeExists(
     const VertexIdType source,
     const VertexIdType target
   ) const
@@ -368,14 +405,15 @@ public:
   }
 
   /**
-   * @brief Removes the given edge.
+   * @brief Removes the edge from source to target.
    */
   void
   removeEdge(
-    Edge&& e
+    const Vertex& source,
+    const Vertex& target
   )
   {
-    boost::remove_edge(*e, m_graph);
+    boost::remove_edge(*source, *target, m_graph);
   }
 
   /**
@@ -394,7 +432,7 @@ public:
    * @brief Returns set of all the bidirected edges in the graph.
    */
   std::unordered_set<Edge, typename Edge::Hash>
-  getBidirectedEdges() const
+  bidirectedEdges() const
   {
     std::unordered_set<Edge, typename Edge::Hash> bidirected;
     for (auto e: edges()) {

@@ -166,6 +166,12 @@ public:
     return typename ::Vertex<GraphType, Arg, VertexIdType>(m_graph, boost::target(m_edge, *m_graph));
   }
 
+  bool
+  isBidirected() const
+  {
+    return boost::edge(*target(), *source(), *m_graph).second;
+  }
+
 public:
   /**
    * @brief Hash provider for the edge.

@@ -126,6 +126,20 @@ public:
   }
 
   /**
+   * @brief Copy constructor for the vertex wrapper.
+   *
+   * @param graph Instance of the graph implementation.
+   * @param vertex Instance of the vertex implementation.
+   */
+  Vertex(
+    const GraphImpl* const graph,
+    const VertexType& vertex
+  ) : m_graph(graph),
+      m_vertex(vertex)
+  {
+  }
+
+  /**
    * @brief Returns the underlying vertex for this wrapper.
    */
   const VertexType&
@@ -195,7 +209,7 @@ public:
    * @brief Returns an iterator provider over the vertices which are target of outgoing edges from this vertex.
    */
   VertexIteratorProvider<GraphType, Arg, VertexIdType, typename GraphType<Arg, VertexIdType>::AdjacencyIterator>
-  targetVertices() const
+  outNeighbors() const
   {
     return VertexIteratorProvider<GraphType, Arg, VertexIdType, typename GraphType<Arg, VertexIdType>::AdjacencyIterator>(m_graph, boost::adjacent_vertices(m_vertex, *m_graph));
   }
