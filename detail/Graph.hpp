@@ -244,7 +244,7 @@ public:
   Vertex
   wrap(
     const VertexType v
-  )
+  ) const
   {
     return Vertex(&m_graph, v);
   }
@@ -255,7 +255,7 @@ public:
   Edge
   wrap(
     const EdgeType e
-  )
+  ) const
   {
     return Edge(&m_graph, e);
   }
