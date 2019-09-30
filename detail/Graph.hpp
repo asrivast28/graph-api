@@ -240,7 +240,7 @@ public:
   }
 
   /**
-   * @brief Move constructor.
+   *@brief Returns a wrapper for the given vertex reference.
    */
   Vertex
   wrap(
@@ -248,6 +248,17 @@ public:
   )
   {
     return Vertex(&m_graph, v);
+  }
+
+  /**
+   *@brief Returns a wrapper for the given edge reference.
+   */
+  Edge
+  wrap(
+    const EdgeType e
+  )
+  {
+    return Edge(&m_graph, e);
   }
 
   /**

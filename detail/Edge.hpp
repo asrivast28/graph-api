@@ -128,6 +128,20 @@ public:
   }
 
   /**
+   * @brief Copy constructor for the edge wrapper.
+   *
+   * @param graph Instance of the graph implementation.
+   * @param edge Instance of the edge implementation.
+   */
+  Edge(
+    const GraphImpl* const graph,
+    const EdgeType& edge
+  ) : m_graph(graph),
+      m_edge(edge)
+  {
+  }
+
+  /**
    * @brief Returns the underlying edge for this wrapper.
    */
   const EdgeType&
