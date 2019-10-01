@@ -415,6 +415,17 @@ public:
   }
 
   /**
+   * @brief Removes the given edge.
+   */
+  void
+  removeEdge(
+    Edge&& e
+  )
+  {
+    boost::remove_edge(*e, m_graph);
+  }
+
+  /**
    * @brief Removes the edge from source to target.
    */
   void
