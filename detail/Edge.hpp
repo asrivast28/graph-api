@@ -192,8 +192,11 @@ public:
     return typename ::Vertex<GraphType, Arg, VertexIdType>(m_graph, boost::target(m_edge, *m_graph));
   }
 
+  /**
+   * @brief Checks if this edge has an anti-parallel edge.
+   */
   bool
-  isBidirected() const
+  hasAntiParallel() const
   {
     return boost::edge(*target(), *source(), *m_graph).second;
   }

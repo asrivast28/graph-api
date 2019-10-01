@@ -136,26 +136,26 @@ private:
 
 protected:
   /**
-    * @brief Helper class that implements the bidirected edge filter functionality.
+    * @brief Helper class that implements the anti-parallel edge filter functionality.
    */
-  class BidirectedEdgeFilter {
+  class AntiParallelEdgeFilter {
   public:
-    BidirectedEdgeFilter(
+    AntiParallelEdgeFilter(
     ) : m_graph(nullptr),
         m_directed(true)
     {
     }
 
-    BidirectedEdgeFilter(
+    AntiParallelEdgeFilter(
       const GraphImpl& g,
-      const bool filterBidirected = true
+      const bool filterAntiParallel = true
     ) : m_graph(&g),
-        m_directed(filterBidirected)
+        m_directed(filterAntiParallel)
     {
     }
 
     bool
-    bidirectedEdge(
+    antiParallelEdge(
       const EdgeType& e
     ) const
     {
@@ -169,13 +169,13 @@ protected:
       const EdgeType& e
     ) const
     {
-      return m_directed ^ bidirectedEdge(e);
+      return m_directed ^ antiParallelEdge(e);
     }
 
   private:
     const GraphImpl* m_graph;
     bool m_directed;
-  }; // class BidirectedEdgeFilter
+  }; // class AntiParallelEdgeFilter
 
 public:
   /**
@@ -450,39 +450,39 @@ public:
   }
 
   /**
-   * @brief Returns set of all the bidirected edges in the graph.
+   * @brief Returns set of all the anti-parallel edges in the graph.
    */
   std::set<Edge>
-  bidirectedEdges() const
+  antiParallelEdges() const
   {
-    std::set<Edge> bidirected;
+    std::set<Edge> antiParallel;
     for (auto e: edges()) {
       if (edgeExists(e.target(), e.source())) {
-        bidirected.insert(e);
+        antiParallel.insert(e);
       }
     }
-    return bidirected;
+    return antiParallel;
   }
 
   /**
-   * @brief Returns a filtered view of the current graph with the bidirected edges removed.
+   * @brief Returns a filtered view of the current graph with the anti-parallel edges removed.
    */
-  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, BidirectedEdgeFilter>, VertexIdType>
-  filterBidirectedEdges() const
+  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, AntiParallelEdgeFilter>, VertexIdType>
+  filterAntiParallelEdges() const
   {
-    BidirectedEdgeFilter bef(m_graph);
-    boost::filtered_graph<decltype(m_graph), BidirectedEdgeFilter> fg(m_graph, bef);
+    AntiParallelEdgeFilter bef(m_graph);
+    boost::filtered_graph<decltype(m_graph), AntiParallelEdgeFilter> fg(m_graph, bef);
     return Graph<GenericBoostGraph, decltype(fg), VertexIdType>(std::move(fg), m_idVertexMap);
   }
 
   /**
    * @brief Returns a filtered view of the current graph with the directed edges removed.
    */
-  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, BidirectedEdgeFilter>, VertexIdType>
+  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, AntiParallelEdgeFilter>, VertexIdType>
   filterDirectedEdges() const
   {
-    BidirectedEdgeFilter bef(m_graph, false);
-    boost::filtered_graph<decltype(m_graph), BidirectedEdgeFilter> fg(m_graph, bef);
+    AntiParallelEdgeFilter bef(m_graph, false);
+    boost::filtered_graph<decltype(m_graph), AntiParallelEdgeFilter> fg(m_graph, bef);
     return Graph<GenericBoostGraph, decltype(fg), VertexIdType>(std::move(fg), m_idVertexMap);
   }
 
