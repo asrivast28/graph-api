@@ -134,19 +134,19 @@ private:
     bool& m_hasCycles;
   };
 
-private:
+protected:
   /**
     * @brief Helper class that implements the bidirected edge filter functionality.
    */
-  class BidrectedEdgeFilter {
+  class BidirectedEdgeFilter {
   public:
-    BidrectedEdgeFilter(
+    BidirectedEdgeFilter(
     ) : m_graph(nullptr),
         m_directed(true)
     {
     }
 
-    BidrectedEdgeFilter(
+    BidirectedEdgeFilter(
       const GraphImpl& g,
       const bool filterBidirected = true
     ) : m_graph(&g),
@@ -175,7 +175,7 @@ private:
   private:
     const GraphImpl* m_graph;
     bool m_directed;
-  }; // class BidrectedEdgeFilter
+  }; // class BidirectedEdgeFilter
 
 public:
   /**
@@ -456,22 +456,22 @@ public:
   /**
    * @brief Returns a filtered view of the current graph with the bidirected edges removed.
    */
-  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, BidrectedEdgeFilter>, VertexIdType>
+  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, BidirectedEdgeFilter>, VertexIdType>
   filterBidirectedEdges() const
   {
-    BidrectedEdgeFilter bef(m_graph);
-    boost::filtered_graph<decltype(m_graph), BidrectedEdgeFilter> fg(m_graph, bef);
+    BidirectedEdgeFilter bef(m_graph);
+    boost::filtered_graph<decltype(m_graph), BidirectedEdgeFilter> fg(m_graph, bef);
     return Graph<GenericBoostGraph, decltype(fg), VertexIdType>(std::move(fg), m_idVertexMap);
   }
 
   /**
    * @brief Returns a filtered view of the current graph with the directed edges removed.
    */
-  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, BidrectedEdgeFilter>, VertexIdType>
+  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, BidirectedEdgeFilter>, VertexIdType>
   filterDirectedEdges() const
   {
-    BidrectedEdgeFilter bef(m_graph, false);
-    boost::filtered_graph<decltype(m_graph), BidrectedEdgeFilter> fg(m_graph, bef);
+    BidirectedEdgeFilter bef(m_graph, false);
+    boost::filtered_graph<decltype(m_graph), BidirectedEdgeFilter> fg(m_graph, bef);
     return Graph<GenericBoostGraph, decltype(fg), VertexIdType>(std::move(fg), m_idVertexMap);
   }
 
