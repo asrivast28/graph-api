@@ -5,11 +5,8 @@
 #ifndef DETAIL_GRAPH_HPP_
 #define DETAIL_GRAPH_HPP_
 
-#include <boost/graph/copy.hpp>
 #include <boost/graph/depth_first_search.hpp>
-#include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graphviz.hpp>
-#include <boost/graph/tiernan_all_cycles.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
 
@@ -136,97 +133,6 @@ private:
     bool& m_hasCycles;
   };
 
-protected:
-  /**
-    * @brief Helper class that implements the anti-parallel edge filter functionality.
-   */
-  class AntiParallelEdgeFilter {
-  public:
-    AntiParallelEdgeFilter(
-    ) : m_graph(nullptr),
-        m_directed(true)
-    {
-    }
-
-    AntiParallelEdgeFilter(
-      const GraphImpl& g,
-      const bool filterAntiParallel = true
-    ) : m_graph(&g),
-        m_directed(filterAntiParallel)
-    {
-    }
-
-    bool
-    antiParallelEdge(
-      const EdgeType& e
-    ) const
-    {
-      auto source = boost::source(e, *m_graph);
-      auto target = boost::target(e, *m_graph);
-      return boost::edge(target, source, *m_graph).second;
-    }
-
-    bool
-    operator()(
-      const EdgeType& e
-    ) const
-    {
-      return m_directed ^ antiParallelEdge(e);
-    }
-
-  private:
-    const GraphImpl* m_graph;
-    bool m_directed;
-  }; // class AntiParallelEdgeFilter
-
-private:
-  /**
-   * @brief Helper class for counting all the simple cycles that
-   *        an edge is part of.
-   */
-  class EdgeCycleCounter {
-  public:
-    EdgeCycleCounter(
-      const Graph& graph,
-      std::unordered_map<Edge, size_t, typename Edge::Hash>& counts
-    ) : m_graph(graph),
-        m_counts(counts)
-    {
-    }
-
-    template <typename Path, typename DirectedGraph>
-    void
-    cycle(
-      const Path& p,
-      const DirectedGraph& dg
-    )
-    {
-      using IndexMap = typename boost::property_map<DirectedGraph, boost::vertex_index_t>::const_type;
-      IndexMap indices = boost::get(boost::vertex_index, dg);
-      auto u = p.begin();
-      auto v = u+1;
-      while (v != p.end()) {
-        auto e = m_graph.getEdge(boost::get(indices, *u), boost::get(indices, *v));
-        if (m_counts.find(e) == m_counts.end()) {
-          m_counts[e] = 0;
-        }
-        m_counts[e] += 1;
-        ++u;
-        ++v;
-      }
-      v = p.begin();
-      auto e = m_graph.getEdge(boost::get(indices, *u), boost::get(indices, *v));
-      if (m_counts.find(e) == m_counts.end()) {
-        m_counts[e] = 0;
-      }
-      m_counts[e] += 1;
-    }
-
-  private:
-    const Graph& m_graph;
-    std::unordered_map<Edge, size_t, typename Edge::Hash>& m_counts;
-  }; // class EdgeCycleCounter
-
 public:
   /**
    * @brief Constructor that reads graph in edge list format from the given file and builds the in-memory graph.
@@ -286,6 +192,15 @@ public:
   ) : m_graph(g),
       m_idVertexMap(idVertexMap)
   {
+  }
+
+  /**
+   * @brief Returns the underlying graph implementation for this wrapper.
+   */
+  const GraphImpl&
+  operator*() const
+  {
+    return m_graph;
   }
 
   /**
@@ -530,28 +445,6 @@ public:
   }
 
   /**
-   * @brief Returns a filtered view of the current graph with the anti-parallel edges removed.
-   */
-  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, AntiParallelEdgeFilter>, VertexIdType>
-  filterAntiParallelEdges() const
-  {
-    AntiParallelEdgeFilter bef(m_graph);
-    boost::filtered_graph<decltype(m_graph), AntiParallelEdgeFilter> fg(m_graph, bef);
-    return Graph<GenericBoostGraph, decltype(fg), VertexIdType>(std::move(fg), m_idVertexMap);
-  }
-
-  /**
-   * @brief Returns a filtered view of the current graph with the directed edges removed.
-   */
-  Graph<GenericBoostGraph, boost::filtered_graph<GraphImpl, AntiParallelEdgeFilter>, VertexIdType>
-  filterDirectedEdges() const
-  {
-    AntiParallelEdgeFilter bef(m_graph, false);
-    boost::filtered_graph<decltype(m_graph), AntiParallelEdgeFilter> fg(m_graph, bef);
-    return Graph<GenericBoostGraph, decltype(fg), VertexIdType>(std::move(fg), m_idVertexMap);
-  }
-
-  /**
    * @brief Checks if the graph has any cycles.
    */
   bool
@@ -583,25 +476,6 @@ public:
   }
 
   /**
-   * @brief Counts the number of simple cycles that each edge is part of.
-   */
-  std::unordered_map<Edge, size_t, typename Edge::Hash>
-  countEdgeCycles() const
-  {
-    // Only use directed edges for detecting the cycles
-    AntiParallelEdgeFilter bef(m_graph);
-    boost::filtered_graph<decltype(m_graph), AntiParallelEdgeFilter> fg(m_graph, bef);
-    // Copy the graph to a directed graph
-    typename DirectedGraph<Arg, VertexIdType>::Impl dg;
-    boost::copy_graph(fg, dg);
-    // Record all the counts
-    std::unordered_map<Edge, size_t, typename Edge::Hash> counts;
-    EdgeCycleCounter ecc(*this, counts);
-    boost::tiernan_all_cycles(dg, ecc);
-    return counts;
-  }
-
-  /**
    * @brief Writes the graph, with VertexLabel property, to a Graphviz format dot file.
    */
   EnableBoostAll<GraphType, VertexLabel, VertexIdType>
@@ -622,7 +496,7 @@ public:
   {
   }
 
-private:
+protected:
   GraphImpl m_graph;
   std::unordered_map<VertexIdType, VertexType> m_idVertexMap;
 }; // class Graph<GraphType, Arg, VertexIdType, EnableBoostAll<GraphType, Arg, VertexIdType>>
