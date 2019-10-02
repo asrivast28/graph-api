@@ -64,7 +64,6 @@ public:
       int
     )
     {
-
       auto copy = *this;
       operator++();
       return copy;
@@ -113,6 +112,15 @@ public:
   using InEdgeIterator = Iterator<typename GraphType<Arg, VertexIdType>::InEdgeIterator>;
 
 public:
+  /**
+   * @brief Default constructor.
+   */
+  Edge()
+    : m_graph(nullptr),
+      m_edge()
+  {
+  }
+
   /**
    * @brief Move constructor for the edge wrapper.
    *

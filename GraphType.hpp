@@ -7,6 +7,7 @@
 
 #include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/directed_graph.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 
@@ -70,6 +71,12 @@ using BidirectionalAdjacencyList = GraphTraits<boost::adjacency_list<boost::vecS
  */
 template <typename VertexProperties, typename UnsignedType>
 using DirectedAdjacencyList = GraphTraits<boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS, VertexProperties>, UnsignedType>;
+
+/**
+ * @brief Boost directed graph.
+ */
+template <typename VertexProperties, typename UnsignedType>
+using DirectedGraph = GraphTraits<boost::directed_graph<VertexProperties>, UnsignedType>;
 
 /**
  * @brief Boost bidirectional CSR graph.
