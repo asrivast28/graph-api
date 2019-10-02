@@ -215,9 +215,6 @@ public:
    */
   class Hash {
   public:
-    using VertexType = typename GraphType<Arg, VertexIdType>::VertexType;
-
-  public:
     Hash()
       : m_hasher()
     {
@@ -228,12 +225,12 @@ public:
       const Edge& e
     ) const
     {
-      // Use boost::hash for hashing the edge as {source, target} ordered pair
-      return m_hasher(std::make_pair(*e.source(), *e.target()));
+      // Use boost::hash for hashing the underlying edge descriptor
+      return m_hasher(*e);
     }
 
   private:
-    boost::hash<std::pair<VertexType, VertexType>> m_hasher;
+    boost::hash<EdgeType> m_hasher;
   };
 
 private:
