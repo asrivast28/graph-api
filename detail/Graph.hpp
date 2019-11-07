@@ -6,7 +6,6 @@
 #define DETAIL_GRAPH_HPP_
 
 #include <boost/graph/depth_first_search.hpp>
-#include <boost/graph/isomorphism.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -134,42 +133,6 @@ private:
     bool& m_hasCycles;
   };
 
-  /**
-   * @brief Helper class for comparing graphs for isomorphism.
-   */
-  class VertexInvariant {
-  public:
-    using result_type = size_t;
-    using argument_type = VertexType;
-
-  public:
-    VertexInvariant(
-      const std::unordered_map<VertexType, result_type>& invariant,
-      const size_t max
-    ) : m_invariant(invariant),
-        m_max(max)
-    {
-    }
-
-    result_type
-    operator() (
-      const argument_type& v
-    ) const
-    {
-      return m_invariant.at(v);
-    }
-
-    size_t
-    max() const
-    {
-      return m_max;
-    }
-
-  private:
-    const std::unordered_map<VertexType, result_type>& m_invariant;
-    const size_t m_max;
-  };
-
 public:
   /**
    * @brief Constructor that reads graph in edge list format from the given file and builds the in-memory graph.
@@ -231,28 +194,63 @@ public:
   {
   }
 
+  /**
+   * @brief Checks the equality of two graphs.
+   */
   bool
   operator==(
     const Graph& other
   ) const
   {
-    const auto& otherMap = other.m_idVertexMap;
-    std::unordered_map<VertexType, size_t> reverseMine, reverseTheirs;
-    size_t idx = 0;
-    for (const auto& mine: m_idVertexMap) {
-      auto theirs = otherMap.find(mine.first);
-      if (theirs == otherMap.end()) {
-        return false;
+    bool equal = true;
+    if (numVertices() == other.numVertices()) {
+      // Create a map from the vertex descriptors to the corresponding IDs
+      // for this graph -> the reverse of the m_idVertexMap
+      std::unordered_map<VertexType, VertexIdType> vertexIdMap;
+      for (const auto& kv: m_idVertexMap) {
+        vertexIdMap[kv.second] = kv.first;
       }
-      reverseMine[mine.second] = idx;
-      reverseTheirs[theirs->second] = idx;
-      ++idx;
+      const auto& otherMap = other.m_idVertexMap;
+      for (const auto& kv: m_idVertexMap) {
+        auto sourceId = kv.first;
+        auto thisVertex = wrap(kv.second);
+        // Check if a vertex corresponding to this ID exists in the other graph
+        // and if it has the same out-degree as this vertex
+        if ((otherMap.find(sourceId) != otherMap.end()) &&
+            (thisVertex.outDegree() == other.wrap(otherMap.at(sourceId)).outDegree())) {
+          // Now, check if all the outgoing edges from this
+          // vertex in this graph exist in the other graph
+          for (const auto target: thisVertex.outNeighbors()) {
+            auto targetId = vertexIdMap.at(*target);
+            if (!other.edgeExists(sourceId, targetId)) {
+              equal = false;
+              break;
+            }
+          }
+        }
+        else {
+          equal = false;
+        }
+        if (!equal) {
+          break;
+        }
+      }
     }
-    std::vector<VertexType> iso(numVertices());
-    return boost::isomorphism(m_graph, other.m_graph,
-            boost::isomorphism_map(make_iterator_property_map(iso.begin(), get(boost::vertex_index, m_graph)))
-            .vertex_invariant1(VertexInvariant(reverseMine, idx))
-            .vertex_invariant2(VertexInvariant(reverseTheirs, idx)));
+    else {
+      equal = false;
+    }
+    return equal;
+  }
+
+  /**
+   * @brief Checks the inequality of two graphs.
+   */
+  bool
+  operator!=(
+    const Graph& other
+  ) const
+  {
+    return !(*this == other);
   }
 
   /**
