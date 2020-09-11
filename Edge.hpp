@@ -7,8 +7,6 @@
 
 #include "GraphType.hpp"
 
-#include <iterator>
-
 
 /**
  * @brief Class that provides edge functionality.
